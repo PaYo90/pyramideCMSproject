@@ -1,0 +1,219 @@
+<?php
+
+namespace Aplikacja;
+
+class Dashboard
+{
+	private $request;
+	private $post;
+	private $get;
+	
+	public function __construct($request){
+		$requestString = explode("?", $request);
+		$this->request = empty($requestString) ? $request : $requestString[0];
+		//$this->request = $request;
+	}
+	
+	public function ProcessRequest()
+	{
+		if(!$this->request)
+		{
+			return;
+			//echo "cos sie zjebalo";
+		}
+		
+		$this -> post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+		$this -> get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+		
+		switch ($this->request)
+		{
+			case "/":
+				$this->showDashboard();
+				break;
+			case "/registerForm":
+				$this->showRegister();
+				break;
+			case "/loginForm":
+				$this->showLogin();
+				break;
+			case "/register":
+				$this->register();
+				break;
+			case "/login":
+				$this->login();
+				break;
+			case "/logout":
+				$this->logout();
+				break;
+			case "/profile":
+				$this->showProfile($this->get);
+				break;
+			case "/changePassword":
+				$this->changePassword();
+				break;
+			case "/changeCredentials":
+				$this->changeCredentials();
+				break;
+			case "/sessiondestroy":
+							session_destroy();
+				break;
+				//dalsze inputy
+		}
+
+	}
+	
+	
+	public function showLogin()	{
+		$title = "Logowanie"." - ".SITE_NAME;
+		
+		require("app/views/login.view.php");
+	}
+	public function showRegister()	{
+		$title = "Rejestracja"." - ".SITE_NAME;
+		
+		require("app/views/register.view.php");
+	}
+	public function showDashboard()	{
+		$title = "Tablica informacyjna"." - ".SITE_NAME;
+		
+		require("app/views/dashboard.view.php");
+	}
+	private function showProfile($zmienne)	{
+		$title = "Profile"." - ".SITE_NAME;
+		//zrobic przyjazny url w .htaccess aby ?user=user wygladal jak profile/user
+		//zrobic aby nie zalogowany nie mogl wyswietlic tej strony
+		if($zmienne['user']==NULL){
+			$user=$_SESSION['user']->username;
+		}else{
+			$user=$zmienne['user'];
+		}
+		
+		$db = new DB();
+		$db->query("SELECT * FROM user WHERE username = :username");
+		$db->bind(':username', $user);
+		$row = $db->single();
+		
+		$panstwo = new countryParser($row['country']);
+		
+		require("app/views/profile.view.php");
+	}
+	
+	private function register()	{
+		if (empty($this->post['username']) || empty($this->post['email']) || empty($this->post['password']) || empty($this->post['password2']) || empty($this->post['lname']) || empty($this->post['fname'])){
+			Messages::setError("Zostawiłeś, któreś pole puste");
+			header("Location:http://". ROOT_APP_URL ."/registerForm");
+			return;
+		}
+		if ($this->post['password'] !== $this->post['password2']) {
+			Messages::setError("Hasła się nie zgadzają");
+			header("Location:http://". ROOT_APP_URL ."/registerForm");
+			return;
+		}
+		if ($this->post['terms'] !== "agreed") {
+			Messages::setError("Musisz zaakceptować regulamin");			
+			header("Location:http://". ROOT_APP_URL ."/registerForm");
+			return;
+		}
+		
+		$db = new DB();
+		$db->query('INSERT INTO user (username,email,password,imie,nazwisko,newsletter) VALUES(:username,:email,:password,:imie,:nazwisko,:newsletter)');
+		$db->bind(':username', $this->post['username']);
+		$db->bind(':email', $this->post['email']);
+		$db->bind(':password', hash(sha256, $this->post['username'] . $this->post['password']));
+		$db->bind(':imie', $this->post['fname']);
+		$db->bind(':nazwisko', $this->post['lname']);
+		$db->bind(':email', $this->post['email']);
+		$db->bind(':newsletter', $this->post['newsletter']);
+		$db->execute();
+		
+		if($db->lastInsertId()){
+			Messages::setSuccess("Zarejestrowałeś się!");			
+			header("Location:http://". ROOT_APP_URL ."/loginForm");
+		}else{
+			Messages::setError("Coś poszło nie tak, nie wiadomo co.");	
+			header("Location:http://". ROOT_APP_URL ."/registerForm");
+		}
+	}
+	
+	private function login(){
+		if (empty($this->post['username']) || empty($this->post['password'])){
+			Messages::setError("Nie wszystkie pola zostały wypełnione");
+			header("Location:http://". ROOT_APP_URL . "/loginForm");
+			return;
+		}
+		$db = new DB();
+		$db->query("SELECT * FROM user WHERE username = :username AND password = :pass");
+		$db->bind(':username', $this->post['username']);
+		$db->bind(':pass', hash('sha256', $this->post['username'] . $this->post['password']));
+		$row = $db->single();
+		
+		if($row)
+		{
+			$_SESSION['user'] = new User($row['id'], $row['email'], $row['username']);
+			
+			//Messages::setSuccess("Zalogowano poprawnie");
+			header("Location:http://". ROOT_APP_URL);
+		}else{
+			Messages::setError("Nie udało się zalogować");
+			header("Location:http://". ROOT_APP_URL ."/loginForm");			
+		}
+	}
+	
+
+	
+	
+	private function changePassword(){
+		//$this->verifyUserSession();
+
+
+		if ( empty($this->post['oldPassword']) || empty($this->post['password']) || empty($this->post['password2']) )
+		{
+			Messages::setError("Nie wszystkie pola zostały wypełnione.");
+			header("Location:http://" . ROOT_APP_URL . "/profile?edit=on");
+			return;
+		}
+		
+		//sprawdzanie starego hasla
+
+		$db = new DB();
+		$db->query('SELECT password FROM user WHERE username = :username');
+		$db->bind(':username', $_SESSION['user']->username);
+		$oldPassword = $db->single();	
+		$hashPassword = hash('sha256', $_SESSION['user']->username . $this->post['password']);
+		$hashOldPassword = hash('sha256', $_SESSION['user']->username . $this->post['oldPassword']);
+				//porownanie starego hasla z haslem w bazie
+		if ($oldPassword["password"] !== $hashOldPassword){
+			Messages::setError("Stare hasło różni się od tego, które posiadasz.");
+			header("Location:http://" . ROOT_APP_URL . "/profile?edit=on");
+			return;
+		}
+				//porownanie starego hasla z nowym
+		if ($hashPassword == $hashOldPassword){
+			Messages::setError("Nowe hasło jest identyczne jak stare.");
+			header("Location:http://" . ROOT_APP_URL . "/profile?edit=on");
+			return;
+		}
+				//sprawdzenie czy pacjent sie nie pomylil :P
+		if ($this->post['password'] !== $this->post['password2'])
+		{
+			Messages::setError("Nowe hasła nie są identyczne.");
+			header("Location:http://" . ROOT_APP_URL . "/profile?edit=on");
+			return;
+		}
+		
+
+		$db->query('UPDATE user SET password = :password WHERE id = :id');
+		$db->bind(':id', $_SESSION['user']->id);
+		$db->bind(':password', $hashPassword);
+		$db->execute();
+		
+		if ($db->rowsAffected() > 0){//sprawdzic czy nie wyswietla ci panelu po zmianie hasla, po zrobieniu zabezpieczen
+			Messages::setSuccess("Hasło zmienione. Zaloguj się nowymi danymi.");
+			header("Location:http://". ROOT_APP_URL ."/loginForm");
+		}else{
+			Messages::setError("Nie udało się zmienić hasła.");
+			header("Location:http://" . ROOT_APP_URL . "/profile?edit=on");			
+		}
+	}
+}
+
