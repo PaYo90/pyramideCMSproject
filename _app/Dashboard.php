@@ -89,7 +89,7 @@ class Dashboard
 				break;
 			case "adminChangeEmail":
 				$this->adminChangeEmail();
-				return;
+				break;
 			case "searchUserAdmin":
 				$this->searchUserAdmin($this->post['searchAnything']);
 				break;
@@ -98,6 +98,12 @@ class Dashboard
 				$ActiveMenuCategory="MAIN";
 				$ActiveMenuSubCategory="forum";
 				require("app/views/forum/forum_list.view.php");
+				break;
+			case "makeNewCategory":
+				$this->makeNewCategory();
+				break;
+			case "deleteCategory":
+				$this->makeNewCategory();
 				break;
 			default:
 				$title = "ERROR 404 - ".SITE_NAME;
@@ -660,4 +666,97 @@ class Dashboard
 			}
 		}
 	}
+	
+	public function forumEditSelectNumbers($underCategory){
+        $this->isAdmin();
+       
+        $db = new DB();
+        $db -> query("SELECT id,kolejnosc FROM forums WHERE kat_id = :UnderCategory ORDER BY kolejnosc ASC");
+        $db -> bind(':UnderCategory', $underCategory);
+        return $db -> resultSet();
+    }
+   
+    public function categoryMakeSelectNumbers(){
+        $this->isAdmin();
+       
+        $db = new DB();
+        $db -> query("SELECT id,kolejnosc FROM forum_category ORDER BY kolejnosc ASC");
+        return $db -> resultSet();
+    }
+	
+	public function makeNewCategory(){
+		
+	}
+	
+	public function deleteCategory(){
+		
+	}
+	
+	public function makeNewForum(){
+		
+	}
+	
+	public function deleteForum(){
+		
+	}
+   
+    public function changeKategory(){
+        $this->isAdmin();
+       
+        $db = new DB();
+       
+        //zmiana kolejnosci - tylko!
+        if($this->post["CatNewNumber"]>$this->post["CatOldNumber"]){
+            $db -> query("SELECT id,kolejnosc FROM forum_category WHERE kolejnosc > :CatOldNumber AND kolejnosc <= :CatNewNumber ORDER BY kolejnosc ASC");
+            $db -> bind (':CatOldNumber', $this->post["CatOldNumber"]);
+            $db -> bind (':CatNewNumber', $this->post["CatNewNumber"]);
+            $wyniki = $db -> resultSet();
+           
+            foreach($wyniki as $kategoria){
+                $kategoria['kolejnosc']--;
+ 
+                $db -> query("UPDATE forum_category SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+                $db -> bind(':kolejnoscNowa', $kategoria['kolejnosc']);
+                $db -> bind(':id', $kategoria['id']);
+                $db->execute();
+            }
+           
+            $db -> query("UPDATE forum_category SET name = :NewName, opis = :NewDesc, kolejnosc = :CatNewNumber WHERE id = :CatId");
+            $db -> bind (':NewName', $this->post['CatNewName']);
+            $db -> bind (':NewDesc', $this->post['CatNewDesc']);
+            $db -> bind (':CatNewNumber', $this->post['CatNewNumber']);
+            $db -> bind (':CatId', $this->post['CatId']);
+            $db -> execute();
+           
+        }elseif($this->post["CatNewNumber"]<$this->post["CatOldNumber"]){
+            $db -> query("SELECT id,kolejnosc FROM forum_category WHERE kolejnosc < :CatOldNumber AND kolejnosc >= :CatNewNumber ORDER BY kolejnosc DESC");
+            $db -> bind (':CatOldNumber', $this->post["CatOldNumber"]);
+            $db -> bind (':CatNewNumber', $this->post["CatNewNumber"]);
+            $wyniki = $db -> resultSet();
+           
+            foreach($wyniki as $kategoria){
+                $kategoria['kolejnosc']++;
+ 
+                $db -> query("UPDATE forum_category SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+                $db -> bind(':kolejnoscNowa', $kategoria['kolejnosc']);
+                $db -> bind(':id', $kategoria['id']);
+                $db->execute();
+            }
+           
+            $db -> query("UPDATE forum_category SET name = :NewName, opis = :NewDesc, kolejnosc = :CatNewNumber WHERE id = :CatId");
+            $db -> bind (':NewName', $this->post['CatNewName']);
+            $db -> bind (':NewDesc', $this->post['CatNewDesc']);
+            $db -> bind (':CatNewNumber', $this->post['CatNewNumber']);
+            $db -> bind (':CatId', $this->post['CatId']);
+            $db -> execute();
+        }else{
+            $db -> query("UPDATE forum_category SET name = :NewName, opis = :NewDesc WHERE id = :CatId");
+            $db -> bind (':NewName', $this->post['CatNewName']);
+            $db -> bind (':NewDesc', $this->post['CatNewDesc']);
+            $db -> bind (':CatId', $this->post['CatId']);
+            $db -> execute();
+        }
+        Messages::setSuccess("Kategoria zmieniona");
+        header("Location:http://".ROOT_APP_URL."/forum");
+    }
 }

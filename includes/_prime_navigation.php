@@ -37,7 +37,7 @@
 						
 						
 						<ul id="js-nav-menu" class="nav-menu">
-							<li <?php if($ActiveMenuCategory=="MAIN"){ echo "class=\"active\""; }?>>
+							<li <?php if($ActiveMenuCategory=="MAIN"){ echo " class=\"active\""; }?>>
 								<a href="#" title="Application Intel" data-filter-tags="application intel">
 									<i class="fal fa-info-circle"></i>
                                 	<span class="nav-link-text">Main</span>

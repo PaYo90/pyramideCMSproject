@@ -26,7 +26,7 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">STOP!</button>
-                                                            <a href="http://<?=ROOT_APP_URL;?>/deleteKat?id=<?=$kategoria['id'];?>&kol=<?=$kategoria['kolejnosc'];?>" class="btn btn-primary waves-effect waves-themed">Go Ahead..</a>
+                                                            <a href="http://<?=ROOT_APP_URL;?>/deleteCategoryt?id=<?=$kategoria['id'];?>&kol=<?=$kategoria['kolejnosc'];?>" class="btn btn-primary waves-effect waves-themed">Go Ahead..</a>
                                                         </div>
                                                     </div>
                                                 </div>
