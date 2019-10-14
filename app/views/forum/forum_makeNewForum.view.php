@@ -35,7 +35,6 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 									<input type="text" class="form-control" name="ForumDesc" maxlength="255" placeholder="Default forum Description"><br>
 									<label class="form-label">FORUM NUMBER</label>									
 									<select name="ForumNumber" class="custom-select form-control">
-                                    	<option selected="">Chose this forum number</option>
 										<?php 
 										$numerekOstatni=0;
 										foreach ($numerki as $numerek){
@@ -43,7 +42,7 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 											$numerekOstatni = $numerek['kolejnosc'];
 											
 										}
-										echo '<option value="'.++$numerekOstatni .'">'.$numerekOstatni .'</option>';
+										echo '<option selected value="'.++$numerekOstatni .'">'.$numerekOstatni .'</option>';
 										?>
 										
                                     	</select>	

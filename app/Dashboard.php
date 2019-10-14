@@ -18,12 +18,15 @@ class Dashboard
 		if(!$this->request)
 		{
 			return;
-			//echo "cos sie zjebalo";
 		}
-		
-		$this -> post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
-		$this -> get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
-		
+		if($_SESSION['user']->isAdmin()){//jesli admin to brak filtrowania znakow html
+			$this -> post = $_POST;
+			$this -> get = $_GET;
+		}else{
+			$this -> post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+			$this -> get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+		}
+			
 		$urlArray = explode("/", $this->request);
 
 		$clean_url = array_filter($urlArray);
@@ -99,11 +102,30 @@ class Dashboard
 				$ActiveMenuSubCategory="forum";
 				require("app/views/forum/forum_list.view.php");
 				break;
+			case "makeNewCategoryShow":
+				$this->showMakeNewCategory();
+				break;
 			case "makeNewCategory":
 				$this->makeNewCategory();
 				break;
 			case "deleteCategory":
-				$this->makeNewCategory();
+				$this->deleteCategory();
+				break;
+			case "makeNewForumShow":
+				$this->showMakeNewForum();
+				break;
+			case "makeNewForum":
+				$this->makeNewForum();
+				break;
+			case "deleteForum":
+				break;
+			case "changeCategoryShow":
+				$this->showChangeCategory();
+				break;
+			case "changeCategory":
+				$this->ChangeCategory();
+				break;
+			case "changeForum":
 				break;
 			default:
 				$title = "ERROR 404 - ".SITE_NAME;
@@ -112,6 +134,49 @@ class Dashboard
 				//dalsze inputy
 		}
 
+	}
+	
+	public function showChangeCategory(){
+		$this->isAdmin();
+		
+		$title = "Edycja Kategorii - ".SITE_NAME;
+		$ActiveMenuCategory="MAIN";
+		$ActiveMenuSubCategory="forum";
+		
+		$info = $this->takeCategoryCredentials($this->get['katid']);
+		$info = $info['0'];//tymczasowe rozwiazanie - takeCategory... zwraca podwojna tablice - naprawic to
+		
+		
+		$numerki = $this->categoryMakeSelectNumbers();
+		
+		//var_dump($info['0']);
+		
+		require("app/views/forum/forum_editCategoryCre.view.php");
+	}
+	
+	public function showMakeNewForum(){
+		$this->isAdmin();
+		
+		$title = "Make New Forum - ".SITE_NAME;
+		$ActiveMenuCategory="MAIN";
+		$ActiveMenuSubCategory="forum";
+		$underCategory = $this->get['katid'];
+		
+		$numerki = $this->forumEditSelectNumbers($this->get['katid']);
+		
+		require("app/views/forum/forum_makeNewForum.view.php");
+	}
+	
+	public function showMakeNewCategory(){
+		$this->isAdmin();
+		
+		$title = "Make New forum Category - ".SITE_NAME;
+		$ActiveMenuCategory="MAIN";
+		$ActiveMenuSubCategory="forum";
+		
+		$numerki = $this->categoryMakeSelectNumbers();
+		
+		require("app/views/forum/forum_makeNewCategory.view.php");
 	}
 	
 	public function showAdminPanel(){
@@ -685,22 +750,112 @@ class Dashboard
     }
 	
 	public function makeNewCategory(){
+		$this->isAdmin();
 		
+		$db = new DB();
+		
+		$db -> query("SELECT * FROM forum_category WHERE kolejnosc >= :kolejnosc ORDER BY kolejnosc DESC");
+		$db -> bind (':kolejnosc', $this->post['CatNumber']);
+		$zmianaKolejnosci = $db->resultSet();
+		
+		foreach($zmianaKolejnosci as $row){
+			$row['kolejnosc']++;
+			
+			$db -> query("UPDATE forum_Category SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+			$db -> bind ('kolejnoscNowa', $row['kolejnosc']);
+			$db -> bind (':id', $row['id']);
+			$db -> execute();
+			
+		}
+		$db -> query("INSERT INTO forum_category (name, opis, kolejnosc) VALUES (:name, :opis, :kolejnosc)");
+		$db -> bind (':name', $this->post['CatName']);
+		$db -> bind (':opis', $this->post['CatDesc']);
+		$db -> bind (':kolejnosc', $this->post['CatNumber']);
+		$db -> execute();
+		
+		if($db->lastInsertId()){
+			Messages::setSuccess("Kategoria Dodana");
+			header("Location:http://".ROOT_APP_URL."/forum");
+			return;
+		}else{
+			Messages::setError("Kategoria nie dodana");
+			header("Location:http://".ROOT_APP_URL."/forum");
+			return;
+		}
 	}
 	
 	public function deleteCategory(){
+		$this->isAdmin();
 		
+		$db = new DB();
+		
+		$db -> query("DELETE FROM forum_category WHERE id = :id");
+		$db -> bind (':id', $this->get['id']);
+		$db -> execute();
+		
+		$db -> query("SELECT * FROM forum_category WHERE kolejnosc > :kolejnosc ORDER BY kolejnosc ASC");
+		$db -> bind (':kolejnosc', $this->get['kol']);
+		$zmianaKolejnosci = $db->resultSet();
+		
+		if($zmianaKolejnosci){
+			foreach($zmianaKolejnosci as $row){
+				$row['kolejnosc']--;
+				
+				$db -> query("UPDATE forum_category SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+				$db -> bind (':kolejnoscNowa', $row['kolejnosc']);
+				$db -> bind (':id', $row['id']);
+				$db -> execute();
+			}
+		}
+		
+		header("Location:http://".ROOT_APP_URL."/forum");
+		return;
 	}
 	
 	public function makeNewForum(){
+		$this->isAdmin();
 		
+		$db = new DB();
+		
+		$db -> query("SELECT * FROM forums WHERE kolejnosc >= :kolejnosc AND kat_id = :kat_id ORDER BY kolejnosc DESC");
+		$db -> bind (':kolejnosc', $this->post['ForumNumber']);
+		$db -> bind (':kat_id', $this->post['KatID']);
+		$zmianaKolejnosci = $db->resultSet();
+		
+		foreach($zmianaKolejnosci as $row){
+			$row['kolejnosc']++;
+			
+			$db -> query("UPDATE forums SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+			$db -> bind ('kolejnoscNowa', $row['kolejnosc']);
+			$db -> bind (':id', $row['id']);
+			$db -> execute();
+			
+		}
+		$db -> query("INSERT INTO forums (name, description, ikona, kat_id, kolejnosc) VALUES (:name, :description, :icon, :katid, :kolejnosc)");
+		$db -> bind (':name', $this->post['ForumName']);
+		$db -> bind (':description', $this->post['ForumDesc']);
+		$db -> bind (':icon', $this->post['Icon']);
+		$db -> bind (':katid', $this->post['KatID']);
+		$db -> bind (':kolejnosc', $this->post['ForumNumber']);
+		$db -> execute();
+		
+		if($db->lastInsertId()){
+			Messages::setSuccess("Forum Dodane");
+			header("Location:http://".ROOT_APP_URL."/forum");
+			return;
+		}else{
+			Messages::setError("Forum nie dodane");
+			header("Location:http://".ROOT_APP_URL."/forum");
+			return;
+		}
+			
 	}
 	
 	public function deleteForum(){
 		
 	}
    
-    public function changeKategory(){
+    public function changeCategory(){
         $this->isAdmin();
        
         $db = new DB();
@@ -759,4 +914,21 @@ class Dashboard
         Messages::setSuccess("Kategoria zmieniona");
         header("Location:http://".ROOT_APP_URL."/forum");
     }
+	
+	public function takeCategoryCredentials($katid){//pokazuje informacje o kategorii w punkcie view edytowanej kategorii		
+		$db1 = new DB();
+		
+		$db1 -> query("SELECT * FROM forum_category WHERE id = :katid");
+		$db1 -> bind (':katid', $katid);
+		return $db1 -> resultSet();
+	}
+	
+	public function isAdmin(){
+		if($_SESSION['user']->isAdmin()){
+			return true;
+		}else{
+			header("Location:http://".ROOT_APP_URL);
+			return;
+		}
+	}
 }

@@ -14,3 +14,7 @@ on/off
 
 miasto mozna podac tylko i wylacznie po podaniu panstwa
 zrobic HTML PARSER KODUJACY DLA ZNAKOW HTML NA BB I ODKODUJACY DLA ZNAKOW BB NA HTML
+
+zrobic routy w innym folderze, kazdy route zrobic w innym pliku w ifie i includowac wszystkie, to pozwoli instalowac routy jako osobne mod packi
+
+poczytaj o security w php

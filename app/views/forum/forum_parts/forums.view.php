@@ -4,7 +4,7 @@
                                                     <div class="col-md">
                                                         <div class="p-3">
                                                             <div class="d-flex"><?php//show stack-icon
-																if(!empty($forum['ikona'])){ echo $forum['ikona']; } ?>
+																if($forum['ikona']!==""){ echo $forum['ikona']; } ?>
                                                                 <div class="d-inline-flex flex-column">
                                                                     <a href="javascript:void(0)" class="fs-lg fw-500 d-block">
                                                                         <?=$forum['name'];?> <!--<span class="badge badge-warning rounded">Sticky</span>-->

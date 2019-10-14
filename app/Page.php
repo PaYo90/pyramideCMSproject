@@ -42,7 +42,7 @@ License: You must have a valid license purchased only from wrapbootstrap.com (li
 					<?php
 }
 
-public static function lowerContent()
+public static function lowerContent($ikona=false)
 {
 	?>
 					
@@ -81,6 +81,11 @@ public static function lowerContent()
 			require_once("includes/_end_page_settings.php");
 			?>
     </body>
+	<?php
+		if($ikona==true){
+			include("includes/_font_generator.php");
+		}
+	?>
 </html>
 <?php
 }

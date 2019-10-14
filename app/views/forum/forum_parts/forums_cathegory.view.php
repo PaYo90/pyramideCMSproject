@@ -6,8 +6,8 @@
                                                 <span class="h6 font-weight-bold text-uppercase"><?=$kategoria['name'];?></span>
                                             </div>
                                             <div class="col d-flex">
-                                                <a href="http://<?=ROOT_APP_URL;?>/dodajForum?katid=<?=$kategoria['id'];?>" class="btn btn-outline-info btn-sm ml-auto mr-2 flex-shrink-0">Dodaj Forum</a>
-												<a href="http://<?=ROOT_APP_URL;?>/edycjaKategorii?katid=<?=$kategoria['id'];?>" class="btn btn-outline-dark btn-sm mr-2 flex-shrink-0">Edycja Kategorii</a>
+                                                <a href="http://<?=ROOT_APP_URL;?>/makeNewForumShow?katid=<?=$kategoria['id'];?>" class="btn btn-outline-info btn-sm ml-auto mr-2 flex-shrink-0">Dodaj Forum</a>
+												<a href="http://<?=ROOT_APP_URL;?>/changeCategoryShow?katid=<?=$kategoria['id'];?>" class="btn btn-outline-dark btn-sm mr-2 flex-shrink-0">Edycja Kategorii</a>
                                             </div>
                                         </div>
                                     </div>
@@ -26,7 +26,7 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">STOP!</button>
-                                                            <a href="http://<?=ROOT_APP_URL;?>/deleteCategoryt?id=<?=$kategoria['id'];?>&kol=<?=$kategoria['kolejnosc'];?>" class="btn btn-primary waves-effect waves-themed">Go Ahead..</a>
+                                                            <a href="http://<?=ROOT_APP_URL;?>/deleteCategory?id=<?=$kategoria['id'];?>&kol=<?=$kategoria['kolejnosc'];?>" class="btn btn-primary waves-effect waves-themed">Go Ahead..</a>
                                                         </div>
                                                     </div>
                                                 </div>

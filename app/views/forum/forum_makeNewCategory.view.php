@@ -33,7 +33,6 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 									<label class="form-label">Number of category on views list</label>
 									
 									<select name="CatNumber" class="custom-select form-control">
-                                    	<option selected="">Chose this Category number</option>
 										<?php 
 										$numerekOstatni=0;
 										foreach ($numerki as $numerek){
@@ -41,7 +40,7 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 											$numerekOstatni = $numerek['kolejnosc'];
 											
 										}
-										echo '<option value="'.++$numerekOstatni .'">'.$numerekOstatni .'</option>';
+										echo '<option selected value="'.++$numerekOstatni .'">'.$numerekOstatni .'</option>';
 										?>
 										
                                     	</select>
