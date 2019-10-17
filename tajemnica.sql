@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 02, 2019 at 12:58 PM
+-- Generation Time: Oct 17, 2019 at 06:28 PM
 -- Server version: 10.4.6-MariaDB
 -- PHP Version: 7.3.9
 
@@ -21,6 +21,70 @@ SET time_zone = "+00:00";
 --
 -- Database: `tajemnica`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `forums`
+--
+
+CREATE TABLE `forums` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `ikona` varchar(500) NOT NULL DEFAULT '''NULL''',
+  `kat_id` int(3) NOT NULL,
+  `kolejnosc` int(3) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `forums`
+--
+
+INSERT INTO `forums` (`id`, `name`, `description`, `ikona`, `kat_id`, `kolejnosc`) VALUES
+(14, '1', '', '', 3, 2),
+(15, '2', '', '', 11, 2),
+(16, '3', '', '', 3, 3),
+(17, '4', '', '', 11, 1),
+(18, '5', '', '', 3, 1),
+(19, 'Forum name', 'FORUM DESC', '', 12, 1),
+(20, 'forum 1', 'opis', '', 25, 2),
+(21, '2', 'opis dlugi', '', 25, 3),
+(22, '1', '', '', 24, 1),
+(23, '', '', '<div class=\'icon-stack\'> <i class=\"base base-7 icon-stack-3x opacity-100 color-primary-500\"></i> <i class=\"base base-7 icon-stack-2x opacity-100 color-primary-300\"></i> <i class=\"fal fa-car icon-stack-1x opacity-100 color-white\"></i> </div>', 25, 0),
+(24, 'jakies forum', 'jakis opis', '', 26, 3),
+(25, 'forum', 'opis', '', 27, 1),
+(26, '1', '1', '', 26, 1),
+(27, '3', '3', '', 26, 4),
+(28, '2', '', '', 26, 2),
+(29, '1', '11', '', 35, 4),
+(30, '2', '22', '', 35, 5),
+(31, '', '', '', 35, 2),
+(32, '234', '234', '', 35, 0),
+(33, '22', '22', '<div class=\'icon-stack display-4 mr-3 flex-shrink-0\'> <i class=\"base base-7 icon-stack-3x opacity-100 color-primary-500\"></i> <i class=\"base base-7 icon-stack-2x opacity-100 color-primary-300\"></i> <i class=\"fal fa-car icon-stack-1x opacity-100 color-white\"></i> </div>', 35, 1),
+(34, '<h1>11</h1>', 'z fontem', '<div class=\'icon-stack\'>\r\n<i class=\"fas fa-address-book icon-stack-3x opacity-100 color-primary-500 \"></i> <i class=\"base base-1 icon-stack-2x opacity-100 color-primary-500\"></i> <i class=\"fal fa-address-book icon-stack-1x opacity-100 color-fusion-800\"></i>\r\n</div>', 34, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `forum_category`
+--
+
+CREATE TABLE `forum_category` (
+  `id` int(11) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `opis` varchar(255) NOT NULL,
+  `kolejnosc` int(2) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `forum_category`
+--
+
+INSERT INTO `forum_category` (`id`, `name`, `opis`, `kolejnosc`) VALUES
+(34, '1-edit', 'opis dodany', 2),
+(35, '223', '', 1),
+(36, '333', '', 3);
 
 -- --------------------------------------------------------
 
@@ -61,13 +125,14 @@ INSERT INTO `reminder` (`id`, `userID`, `secretKey`, `validUntile`, `dateUsed`) 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Table structure for table `users`
 --
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `id` int(10) UNSIGNED NOT NULL,
   `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `PayPal` int(11) DEFAULT NULL,
   `password` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `imie` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `nazwisko` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -76,17 +141,18 @@ CREATE TABLE `user` (
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `RoleID` int(11) NOT NULL DEFAULT 0,
   `newsletter` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
-  `is_banned` bit(1) NOT NULL,
-  `is_activated` bit(1) DEFAULT b'0'
+  `banned_until` timestamp(3) NULL DEFAULT NULL,
+  `is_activated` varchar(3) COLLATE utf8mb4_unicode_520_ci DEFAULT 'no'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 --
--- Dumping data for table `user`
+-- Dumping data for table `users`
 --
 
-INSERT INTO `user` (`id`, `username`, `email`, `password`, `imie`, `nazwisko`, `miasto`, `country`, `date_created`, `RoleID`, `newsletter`, `is_banned`, `is_activated`) VALUES
-(28, 'Skorpiono', 'skorpss@gmail.com', '$2y$12$lDjSV/bYYcjZLkJyEW3poeE0qLwfOvoH2i06MY2KsqCJAGWiooe6e', 'Szymon', 'Zachariasz', NULL, NULL, '2019-10-01 18:33:09', 0, 'yes', b'0', b'1'),
-(29, 'Skorpiono2', 'skorpss2@gmail.com', '$2y$12$76dy/JmbT3YaF1k8SLhju.LsAqkMj6hNl8q6UVlwgx/9M3R7hLwAS', 'Szymon', 'Zachariasz', NULL, NULL, '2019-10-01 19:03:36', 0, 'no', b'0', b'1');
+INSERT INTO `users` (`id`, `username`, `email`, `PayPal`, `password`, `imie`, `nazwisko`, `miasto`, `country`, `date_created`, `RoleID`, `newsletter`, `banned_until`, `is_activated`) VALUES
+(28, 'Skorpiono', 'zxvxcx', NULL, '$2y$12$lDjSV/bYYcjZLkJyEW3poeE0qLwfOvoH2i06MY2KsqCJAGWiooe6e', 'Szymon', 'Zachariasz', NULL, NULL, '2019-10-01 18:33:09', 1, 'yes', NULL, 'yes'),
+(29, 'Skorpiono2', 'skorpss2@gmail.com', NULL, '$2y$12$76dy/JmbT3YaF1k8SLhju.LsAqkMj6hNl8q6UVlwgx/9M3R7hLwAS', 'Szymon', 'Zachariasz', NULL, NULL, '2019-10-01 19:03:36', 0, 'no', '0000-00-00 00:00:00.000', 'yes'),
+(31, 'Skorpiono4', 'skorpss4@gmail.com', NULL, '$2y$12$QKPxpcd5hIEcSUGV08illu6Zjt/JpRiL89rRacsqxDbmOfvF.fI7q', 'Krystyna', 'Zobczynska', NULL, NULL, '2019-10-04 16:19:07', 0, 'no', '0000-00-00 00:00:00.000', 'yes');
 
 -- --------------------------------------------------------
 
@@ -97,12 +163,32 @@ INSERT INTO `user` (`id`, `username`, `email`, `password`, `imie`, `nazwisko`, `
 CREATE TABLE `user_activation` (
   `id` int(11) NOT NULL,
   `username` varchar(64) NOT NULL,
-  `activation_hash` varchar(64) NOT NULL
+  `activation_hash` varchar(64) NOT NULL,
+  `date_used` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `user_activation`
+--
+
+INSERT INTO `user_activation` (`id`, `username`, `activation_hash`, `date_used`) VALUES
+(16, 'Skorpiono4', '09b3cf3bf1c9fe4f0a43696e26ac327f97fdc5db17b46cc639d51fa7b94ea6fe', '2019-10-04 16:25:34');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `forums`
+--
+ALTER TABLE `forums`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `forum_category`
+--
+ALTER TABLE `forum_category`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `reminder`
@@ -111,9 +197,9 @@ ALTER TABLE `reminder`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `user`
+-- Indexes for table `users`
 --
-ALTER TABLE `user`
+ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -127,22 +213,34 @@ ALTER TABLE `user_activation`
 --
 
 --
+-- AUTO_INCREMENT for table `forums`
+--
+ALTER TABLE `forums`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
+-- AUTO_INCREMENT for table `forum_category`
+--
+ALTER TABLE `forum_category`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+
+--
 -- AUTO_INCREMENT for table `reminder`
 --
 ALTER TABLE `reminder`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT for table `users`
 --
-ALTER TABLE `user`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+ALTER TABLE `users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `user_activation`
 --
 ALTER TABLE `user_activation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
