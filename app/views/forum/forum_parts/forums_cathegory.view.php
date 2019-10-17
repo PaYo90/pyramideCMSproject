@@ -6,8 +6,8 @@
                                                 <span class="h6 font-weight-bold text-uppercase"><?=$kategoria['name'];?></span>
                                             </div>
                                             <div class="col d-flex">
-                                                <a href="http://<?=ROOT_APP_URL;?>/makeNewForumShow?katid=<?=$kategoria['id'];?>" class="btn btn-outline-info btn-sm ml-auto mr-2 flex-shrink-0">Dodaj Forum</a>
-												<a href="http://<?=ROOT_APP_URL;?>/changeCategoryShow?katid=<?=$kategoria['id'];?>" class="btn btn-outline-dark btn-sm mr-2 flex-shrink-0">Edycja Kategorii</a>
+                                                <a href="http://<?=ROOT_APP_URL;?>/makeNewForumForm?katid=<?=$kategoria['id'];?>" class="btn btn-outline-info btn-sm ml-auto mr-2 flex-shrink-0">Dodaj Forum</a>
+												<a href="http://<?=ROOT_APP_URL;?>/editCategoryForm?katid=<?=$kategoria['id'];?>" class="btn btn-outline-dark btn-sm mr-2 flex-shrink-0">Edycja Kategorii</a>
                                             </div>
                                         </div>
                                     </div>

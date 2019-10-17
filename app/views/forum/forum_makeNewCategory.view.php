@@ -30,7 +30,7 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 									<input type="text" class="form-control" name="CatName" maxlength="64" placeholder="Default Category Name"><br>
 									<label clas="form-label">Category Description</label>
 									<input type="text" class="form-control" name="CatDesc" maxlength="255" placeholder="Default Category Description"><br>
-									<label class="form-label">Number of category on views list</label>
+									<label class="form-label">Order Number of Category</label>
 									
 									<select name="CatNumber" class="custom-select form-control">
 										<?php 

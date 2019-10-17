@@ -45,7 +45,7 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 								
                             </div>
 							<div class="col-12 clearfix">
-							<a href="http://<?=ROOT_APP_URL;?>/makeNewCategoryShow" target="_self" class="btn btn-outline-info waves-effect waves-themed float-right">Make New Category</a>
+							<a href="http://<?=ROOT_APP_URL;?>/makeNewCategoryForm" target="_self" class="btn btn-outline-info waves-effect waves-themed float-right">Make New Category</a>
 							</div>
                         </div>
                     </main>

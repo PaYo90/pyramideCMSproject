@@ -25,7 +25,7 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
                         </div>
                         <div class="row">
                             <div class="col-4 offset-4 clearfix">
-								<form action="http://<?=ROOT_APP_URL;?>/changeCategory" method="post">
+								<form action="http://<?=ROOT_APP_URL;?>/editCategory" method="post">
 									<label class="form-label">Category Name</label>
 									<input type="text" class="form-control" name="CatNewName" maxlength="64" value="<?=$info['name'];?>"><br>
 									<label clas="form-label">Category Description</label>

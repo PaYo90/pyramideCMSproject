@@ -3,8 +3,9 @@
                                                 <div class="row no-gutters row-grid align-items-stretch">
                                                     <div class="col-md">
                                                         <div class="p-3">
-                                                            <div class="d-flex"><?php//show stack-icon
-																if($forum['ikona']!==""){ echo $forum['ikona']; } ?>
+                                                            <div class="d-flex">
+																<a href="http://<?=ROOT_APP_URL;?>/editForumForm?forumid=<?=$forum['id'];?>&katid=<?=$forum['kat_id'];?>" class="btn waves-effect waves-themed btn-xs mr-2" target="_self" data-toggle="tooltip" data-placement="right" data-original-title="Edit"><i class="fal color-fusion-50 fa-3x fa-arrow-alt-right"></i></a>
+																<?=$forum['ikona']; ?>
                                                                 <div class="d-inline-flex flex-column">
                                                                     <a href="javascript:void(0)" class="fs-lg fw-500 d-block">
                                                                         <?=$forum['name'];?> <!--<span class="badge badge-warning rounded">Sticky</span>-->
@@ -12,6 +13,7 @@
                                                                     <div class="d-block text-muted fs-sm">
                                                                         <?=$forum['description'];?>
                                                                     </div>
+																	
                                                                 </div>
                                                             </div>
                                                         </div>

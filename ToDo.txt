@@ -18,3 +18,9 @@ zrobic HTML PARSER KODUJACY DLA ZNAKOW HTML NA BB I ODKODUJACY DLA ZNAKOW BB NA 
 zrobic routy w innym folderze, kazdy route zrobic w innym pliku w ifie i includowac wszystkie, to pozwoli instalowac routy jako osobne mod packi
 
 poczytaj o security w php
+zrobic edycje i tworzenie kategorii/forum responsywne
+zamienic editForumForm na editForum a editForum na editForumSend czy cos, i tak cala reszte
+
+dodac mozliwosc wyswietlania i dodawania wlasnych skryptow na podstronach - wordpress tego nie ma
+
+zmienic Number na Order

@@ -8,7 +8,7 @@ class Dashboard
 	private $post;
 	private $get;
 	
-	public function __construct($request){
+	public function __construct($request){//usuwa dane get z url dla ladnego wygladu
 		$requestString = explode("?", $request);
 		$this->request = empty($requestString) ? $request : $requestString[0];
 	}
@@ -19,14 +19,15 @@ class Dashboard
 		{
 			return;
 		}
-		if($_SESSION['user']->isAdmin()){//jesli admin to brak filtrowania znakow html
-			$this -> post = $_POST;
-			$this -> get = $_GET;
+		if(isset($_SESSION['user']) && $_SESSION['user']->isAdmin()){//jesli admin to brak filtrowania znakow html, dla zapisywania ikon w bazie przy kreacji kategorii forum
+			
+			$this -> post = str_replace("\"", "&quot;", $_POST);
+			$this -> get = str_replace("\"", "&quot;", $_GET);
 		}else{
 			$this -> post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
 			$this -> get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
 		}
-			
+			//pozbywa sie "/" z requesta, pozwala na pobieranie drugiej wartosci po nazwie podstrony, taki userfriendly link
 		$urlArray = explode("/", $this->request);
 
 		$clean_url = array_filter($urlArray);
@@ -34,7 +35,7 @@ class Dashboard
 		if(empty($clean_url['1'])){ $clean_url['1']=""; }
 		if(empty($clean_url['2'])){ $clean_url['2']=""; }
 		
-		switch ($clean_url['1'])
+		switch ($clean_url['1'])//ROUTES
 		{
 			case "":
 				$this->showDashboard();
@@ -102,7 +103,7 @@ class Dashboard
 				$ActiveMenuSubCategory="forum";
 				require("app/views/forum/forum_list.view.php");
 				break;
-			case "makeNewCategoryShow":
+			case "makeNewCategoryForm":
 				$this->showMakeNewCategory();
 				break;
 			case "makeNewCategory":
@@ -111,7 +112,7 @@ class Dashboard
 			case "deleteCategory":
 				$this->deleteCategory();
 				break;
-			case "makeNewForumShow":
+			case "makeNewForumForm":
 				$this->showMakeNewForum();
 				break;
 			case "makeNewForum":
@@ -119,13 +120,20 @@ class Dashboard
 				break;
 			case "deleteForum":
 				break;
-			case "changeCategoryShow":
-				$this->showChangeCategory();
+			case "editCategoryForm":
+				$this->showEditCategory();
 				break;
-			case "changeCategory":
-				$this->ChangeCategory();
+			case "editCategory":
+				$this->editCategory();
 				break;
-			case "changeForum":
+			case "editForumForm":
+				$this->showForumEdit();
+				break;
+			case "editForum":
+				$this->editForum();
+				break;
+			case "changeCategory"://changing forum category
+				$this->changeCategory();
 				break;
 			default:
 				$title = "ERROR 404 - ".SITE_NAME;
@@ -136,7 +144,26 @@ class Dashboard
 
 	}
 	
-	public function showChangeCategory(){
+	public function showForumEdit(){
+		$this->isAdmin();
+		
+		$title = "Edycja Forum - ".SITE_NAME;
+		$ActiveMenuCategory="MAIN";
+		$ActiveMenuSubCategory="forum";
+		
+		$forumInfo = $this->takeForumCredentials($this->get['forumid']);
+		
+		$icon = str_replace("\"", "&quot;", $forumInfo['ikona']);
+		
+		$forumList = new Forum();					
+		$kategorie = $forumList -> pobierzKategorie();
+		
+		$numerki = $this->forumEditSelectNumbers($this->get['katid']);
+		
+		require("app/views/forum/forum_editForum.view.php");
+	}
+	
+	public function showEditCategory(){
 		$this->isAdmin();
 		
 		$title = "Edycja Kategorii - ".SITE_NAME;
@@ -144,7 +171,7 @@ class Dashboard
 		$ActiveMenuSubCategory="forum";
 		
 		$info = $this->takeCategoryCredentials($this->get['katid']);
-		$info = $info['0'];//tymczasowe rozwiazanie - takeCategory... zwraca podwojna tablice - naprawic to
+		//$info = $info['0'];//tymczasowe rozwiazanie - takeCategory... zwraca podwojna tablice - naprawic to
 		
 		
 		$numerki = $this->categoryMakeSelectNumbers();
@@ -851,11 +878,83 @@ class Dashboard
 			
 	}
 	
+	public function editForum(){
+		$this->isAdmin();
+		
+		$db = new DB();
+		
+		if($this->post['ForumNewNumber']>$this->post['ForumOldNumber']){
+			
+			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc > :ForumOldNumber ORDER BY kolejnosc ASC");
+			$db->bind(':ForumOldNumber', $this->post['ForumOldNumber']);
+			$resultset = $db->resultSet();
+			
+			foreach($resultset as $row){
+				$row['kolejnosc']--;
+				
+				$db->query("UPDATE forums SET kolejnosc = :NewORDER WHERE id = :ForumID");
+				$db->bind(':NewORDER', $row['kolejnosc']);
+				$db->bind(':ForumID', $row['id']);
+				$db->execute();
+				//dodac tutaj msg do logow
+			}
+			
+		}elseif($this->post['ForumNewNumber']<$this->post['ForumOldNumber']){
+			
+			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc < :ForumOldNumber ORDER BY kolejnosc ASC");
+			$db->bind(':ForumOldNumber', $this->post['ForumOldNumber']);
+			$resultset = $db->resultSet();
+			
+			foreach($resultset as $row){
+				$row['kolejnosc']++;
+				
+				$db->query("UPDATE forums SET kolejnosc = :NewORDER WHERE id = :ForumID");
+				$db->bind(':NewORDER', $row['kolejnosc']);
+				$db->bind(':ForumID', $row['id']);
+				$db->execute();
+				//dodac tutaj msg do logow
+			}
+		}
+		
+		$db->query("UPDATE forums SET name = :NewName, description = :NewDesc, ikona = :NewIcon, kolejnosc = :NewOrder WHERE id = :ID");
+		$db->bind(':NewName',$this->post['ForumNewName']);
+		$db->bind(':NewDesc',$this->post['ForumNewDesc']);
+		$db->bind(':NewIcon',$this->post['NewIcon']);
+		$db->bind(':NewOrder', $this->post['ForumNewNumber']);
+		$db->bind(':ID', $this->post['ForumID']);
+		//msg do logow
+		
+		Messages::setSuccess("Forum details changed");
+		header("Location:http://".ROOT_APP_URL."/forum");
+		return;
+	}
+	
 	public function deleteForum(){
 		
 	}
+	
+	public function changeCategory(){
+		$this->isAdmin();
+		
+		$db = new DB();
+		
+		$db -> query("UPDATE forums SET kat_id = :katid WHERE id = :ID");
+		$db->bind(':katid', $this->post['ForumKatNumber']);
+		$db->bind(':ID', $this->post['ForumID']);
+		$db->execute();
+		
+		if($db->rowsAffected()){
+			Messages::setSuccess("Kategoria zmieniona");
+			header("Location:http://".ROOT_APP_URL."/forum");
+			return;
+		}else{
+			Messages::setError("Nie dokonano żadnych zmian");
+			header("Location:http://".ROOT_APP_URL."/forum");
+			return;
+		}
+	}
    
-    public function changeCategory(){
+    public function editCategory(){
         $this->isAdmin();
        
         $db = new DB();
@@ -920,7 +1019,15 @@ class Dashboard
 		
 		$db1 -> query("SELECT * FROM forum_category WHERE id = :katid");
 		$db1 -> bind (':katid', $katid);
-		return $db1 -> resultSet();
+		return $db1 -> single();
+	}
+	
+	public function takeForumCredentials($forumid){
+		$db = new DB();
+		
+		$db -> query ("SELECT * FROM forums WHERE id = :forumid");
+		$db -> bind (':forumid', $forumid);
+		return $db -> single();
 	}
 	
 	public function isAdmin(){
