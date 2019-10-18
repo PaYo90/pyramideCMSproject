@@ -29,7 +29,7 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 								<form action="http://<?=ROOT_APP_URL;?>/changeCategory" method="post">
 								<label class="form-label">Move Under New Category:</label>
 									
-									<select name="ForumKatNumber" class="custom-select form-control">
+									<select name="NewKatID" class="custom-select form-control">
 										<?php
 										foreach ($kategorie as $kategoria){
 											if($kategoria['id']==$this->get['katid']){
@@ -41,7 +41,10 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 										?>
 										
                                     	</select><br><br>
+									
 									<input type="hidden" value="<?=$forumInfo['id'];?>" name="ForumID">
+									<input type="hidden" value="<?=$this->get['katid'];?>" name="OldKatID">
+									
 									<button class="btn btn-outline-success btn-xs float-right">Change</button><br><br>
 								</form>
 								
@@ -53,13 +56,10 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 									<label class="form-label">Forum New Order Number</label>									
 									<select name="ForumNewNumber" class="custom-select form-control">
 										<?php 
-										$numerekOstatni=0;
 										foreach ($numerki as $numerek){
                                         	echo '<option value="'.$numerek['kolejnosc'].'">'.$numerek['kolejnosc'].'</option>';
-											$numerekOstatni = $numerek['kolejnosc'];
 											
 										}
-										echo '<option selected value="'.++$numerekOstatni .'">'.$numerekOstatni .'</option>';
 										?>
 										
                                     	</select>	<br><br>

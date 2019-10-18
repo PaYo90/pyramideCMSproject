@@ -883,7 +883,7 @@ class Dashboard
 		
 		$db = new DB();
 		
-		if($this->post['ForumNewNumber']>$this->post['ForumOldNumber']){
+		if($this->post['ForumNewNumber'] > $this->post['ForumOldNumber']){
 			
 			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc > :ForumOldNumber ORDER BY kolejnosc ASC");
 			$db->bind(':ForumOldNumber', $this->post['ForumOldNumber']);
@@ -899,10 +899,11 @@ class Dashboard
 				//dodac tutaj msg do logow
 			}
 			
-		}elseif($this->post['ForumNewNumber']<$this->post['ForumOldNumber']){
+		}elseif($this->post['ForumNewNumber'] < $this->post['ForumOldNumber']){
 			
-			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc < :ForumOldNumber ORDER BY kolejnosc ASC");
+			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc < :ForumOldNumber AND kolejnosc >= :ForumNewNumber ORDER BY kolejnosc ASC");
 			$db->bind(':ForumOldNumber', $this->post['ForumOldNumber']);
+			$db->bind(':ForumNewNumber', $this->post['ForumNewNumber']);
 			$resultset = $db->resultSet();
 			
 			foreach($resultset as $row){
@@ -922,6 +923,7 @@ class Dashboard
 		$db->bind(':NewIcon',$this->post['NewIcon']);
 		$db->bind(':NewOrder', $this->post['ForumNewNumber']);
 		$db->bind(':ID', $this->post['ForumID']);
+		$db->execute();
 		//msg do logow
 		
 		Messages::setSuccess("Forum details changed");
@@ -938,20 +940,45 @@ class Dashboard
 		
 		$db = new DB();
 		
-		$db -> query("UPDATE forums SET kat_id = :katid WHERE id = :ID");
-		$db->bind(':katid', $this->post['ForumKatNumber']);
+		//if()
+		$db->query("SELECT kolejnosc FROM forums WHERE id = :ForumID ORDER BY kolejnosc ASC");
+		$db->bind(':ForumID', $this->post['ForumID']);
+		$ForumKolejnosc = $db->single();
+		
+		$db->query("SELECT kolejnosc FROM forums WHERE kat_id = :katid ORDER BY kolejnosc DESC LIMIT 1");
+		$db->bind(":katid", $this->post['NewKatID']);//new category
+		$BiggestForKol = $db->resultSet();
+		
+		if(empty($BiggestForKol)){ $BiggestForKol['0']['kolejnosc']=0;}
+		
+		$db -> query("UPDATE forums SET kat_id = :katid, kolejnosc = :NowaKol WHERE id = :ID");
+		$db->bind(':katid', $this->post['NewKatID']);//new category
+		$db->bind(':NowaKol', ++$BiggestForKol['0']['kolejnosc']);//last record of order in new cat
 		$db->bind(':ID', $this->post['ForumID']);
 		$db->execute();
 		
 		if($db->rowsAffected()){
 			Messages::setSuccess("Kategoria zmieniona");
-			header("Location:http://".ROOT_APP_URL."/forum");
-			return;
 		}else{
 			Messages::setError("Nie dokonano żadnych zmian");
-			header("Location:http://".ROOT_APP_URL."/forum");
-			return;
 		}
+		
+		$db->query("SELECT id, kolejnosc FROM forums WHERE kat_id = :katid AND kolejnosc > :ForumKolejnosc ORDER BY kolejnosc ASC");
+		$db->bind(":katid", $this->post['OldKatID']);
+		$db->bind(":ForumKolejnosc", $ForumKolejnosc['kolejnosc']);
+		$wyniki = $db->resultSet();
+		
+		foreach($wyniki as $row){
+			
+                $db -> query("UPDATE forums SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+                $db -> bind(':kolejnoscNowa', --$row['kolejnosc']);
+                $db -> bind(':id', $row['id']);
+                $db -> execute();
+            }
+		
+		header("Location:http://".ROOT_APP_URL."/forum");
+		return;
+		
 	}
    
     public function editCategory(){
@@ -960,7 +987,7 @@ class Dashboard
         $db = new DB();
        
         //zmiana kolejnosci - tylko!
-        if($this->post["CatNewNumber"]>$this->post["CatOldNumber"]){
+        if($this->post["CatNewNumber"] > $this->post["CatOldNumber"]){
             $db -> query("SELECT id,kolejnosc FROM forum_category WHERE kolejnosc > :CatOldNumber AND kolejnosc <= :CatNewNumber ORDER BY kolejnosc ASC");
             $db -> bind (':CatOldNumber', $this->post["CatOldNumber"]);
             $db -> bind (':CatNewNumber', $this->post["CatNewNumber"]);
@@ -982,7 +1009,7 @@ class Dashboard
             $db -> bind (':CatId', $this->post['CatId']);
             $db -> execute();
            
-        }elseif($this->post["CatNewNumber"]<$this->post["CatOldNumber"]){
+        }elseif($this->post["CatNewNumber"] < $this->post["CatOldNumber"]){
             $db -> query("SELECT id,kolejnosc FROM forum_category WHERE kolejnosc < :CatOldNumber AND kolejnosc >= :CatNewNumber ORDER BY kolejnosc DESC");
             $db -> bind (':CatOldNumber', $this->post["CatOldNumber"]);
             $db -> bind (':CatNewNumber', $this->post["CatNewNumber"]);
@@ -1037,5 +1064,15 @@ class Dashboard
 			header("Location:http://".ROOT_APP_URL);
 			return;
 		}
+	}
+	
+	public function debug($tresc){
+		$debug = new Debugger($tresc, date('d-m-Y H-i-s'));
+		$debug -> dodaj();
+	}
+	
+	public function showvardump($tresc){
+		require("vardump.php");
+		//die();
 	}
 }
