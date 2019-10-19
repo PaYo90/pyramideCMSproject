@@ -25,6 +25,27 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
                         </div>
                         <div class="row">
                             <div class="col-4 offset-4 clearfix">
+								<a href="#" class="btn btn-danger float-left" data-toggle="modal" data-target="#delete-forum-modal-<?=$forumInfo['id'];?>">Delete</a><br><br><br>
+								
+								<div class="modal modal-alert fade" id="delete-forum-modal-<?=$forumInfo['id'];?>" tabindex="-1" role="dialog" style="display: none" aria-modal="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Delete: <?=$forumInfo['name'];?></h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Are you sure? With forum will be deleted all of forum topics written in. Maybe first you want to move them?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">STOP!</button>
+                                                            <a href="http://<?=ROOT_APP_URL;?>/deleteForum?id=<?=$forumInfo['id'];?>&kolejnosc=<?=$forumInfo['kolejnosc'];?>" class="btn btn-primary waves-effect waves-themed">Go Ahead..</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 								
 								<form action="http://<?=ROOT_APP_URL;?>/changeCategory" method="post">
 								<label class="form-label">Move Under New Category:</label>

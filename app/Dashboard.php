@@ -119,6 +119,7 @@ class Dashboard
 				$this->makeNewForum();
 				break;
 			case "deleteForum":
+				$this->deleteForum();
 				break;
 			case "editCategoryForm":
 				$this->showEditCategory();
@@ -885,8 +886,9 @@ class Dashboard
 		
 		if($this->post['ForumNewNumber'] > $this->post['ForumOldNumber']){
 			
-			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc > :ForumOldNumber ORDER BY kolejnosc ASC");
+			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc > :ForumOldNumber AND kolejnosc <= :ForumNewNumber ORDER BY kolejnosc ASC");
 			$db->bind(':ForumOldNumber', $this->post['ForumOldNumber']);
+			$db->bind(':ForumNewNumber', $this->post['ForumNewNumber']);
 			$resultset = $db->resultSet();
 			
 			foreach($resultset as $row){
@@ -932,7 +934,34 @@ class Dashboard
 	}
 	
 	public function deleteForum(){
+		$this->isAdmin();
 		
+		$db = new DB();
+		
+		$db -> query("DELETE FROM forums WHERE id = :id");
+		$db -> bind(':id', $this->get['id']);
+		$db -> execute();
+		
+		if($db->rowsAffected()){
+		Messages::setSuccess("Forum usuniete");
+		}
+		
+		$db -> query("SELECT * FROM forums WHERE kolejnosc > :kolejnosc_forum ORDER BY kolejnosc ASC");
+		$db -> bind (':kolejnosc_forum', $this->get['kolejnosc']);
+		$zmianaKolejnosci = $db->resultSet();
+		
+		if($zmianaKolejnosci){
+			foreach($zmianaKolejnosci as $row){
+				
+				$db -> query("UPDATE forums SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+				$db -> bind (':kolejnoscNowa', --$row['kolejnosc']);
+				$db -> bind (':id', $row['id']);
+				$db -> execute();
+			}
+		}
+		
+		header("Location:http://".ROOT_APP_URL."/forum");
+		return;
 	}
 	
 	public function changeCategory(){
@@ -940,7 +969,6 @@ class Dashboard
 		
 		$db = new DB();
 		
-		//if()
 		$db->query("SELECT kolejnosc FROM forums WHERE id = :ForumID ORDER BY kolejnosc ASC");
 		$db->bind(':ForumID', $this->post['ForumID']);
 		$ForumKolejnosc = $db->single();
