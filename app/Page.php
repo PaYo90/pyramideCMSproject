@@ -42,7 +42,7 @@ License: You must have a valid license purchased only from wrapbootstrap.com (li
 					<?php
 }
 
-public static function lowerContent($ikona=false)
+public static function lowerContent($ikona=false,$summernote=false)
 {
 	?>
 					
@@ -80,6 +80,11 @@ public static function lowerContent($ikona=false)
 			<?php
 			require_once("includes/_end_page_settings.php");
 			?>
+			<?php
+		if($summernote==true){
+			include("includes/summernote.php");
+		}
+	?>
     </body>
 	<?php
 		if($ikona==true){

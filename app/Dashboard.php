@@ -98,10 +98,7 @@ class Dashboard
 				$this->searchUserAdmin($this->post['searchAnything']);
 				break;
 			case "forum":
-				$title = "forum of ".SITE_NAME;
-				$ActiveMenuCategory="MAIN";
-				$ActiveMenuSubCategory="forum";
-				require("app/views/forum/forum_list.view.php");
+				$this->forum($clean_url['2']);
 				break;
 			case "makeNewCategoryForm":
 				$this->showMakeNewCategory();
@@ -136,6 +133,12 @@ class Dashboard
 			case "changeCategory"://changing forum category
 				$this->changeCategory();
 				break;
+			case "newThread":
+				$this->newThread($clean_url['2']);
+				break;
+			case "makeNewThread":
+				$this->makeNewThread($clean_url['2']);
+				break;
 			default:
 				$title = "ERROR 404 - ".SITE_NAME;
 				require("app/views/error_404.view.php");
@@ -143,6 +146,60 @@ class Dashboard
 				//dalsze inputy
 		}
 
+	}
+	
+	public function makeNewThread($forumid){
+		$this->verifyUserSession();
+		
+		$db = new DB();
+		$db -> query("INSERT INTO thread (name, forum_id, author) VALUES (:name, :forum_id, :author)");
+		$db -> bind(':name', $this->post['ThreadName']);
+		$db -> bind(':forum_id', $forumid);
+		$db -> bind(':author', $this->post['UserName']);
+		$db -> execute();
+		$threadId = $db -> lastInsertId();
+		
+		$db -> query("INSERT INTO posts (author, content, made_date, thread_id) VALUES (:author, :content, now(), :thread_id)");
+		$db -> bind (':author', $this->post['UserName']);
+		$db -> bind (':content', $this->post['content']);
+		$db -> bind (':thread_id', $threadId);
+		$db -> execute();
+		
+		header("Location:http://".ROOT_APP_URL."/forum/".$this->post['ForumId']."/".$threadId);
+		return;
+	}
+	
+	public function newThread($forumid){
+		$this->verifyUserSession();
+		
+		$title = "forum of ".SITE_NAME;
+		$ActiveMenuCategory="MAIN";
+		$ActiveMenuSubCategory="forum";
+		
+		require("app/views/forum/forum_parts/forum_new_thread.php");
+		return;
+	}
+	
+	public function forum($forumid=false){//dodac 404, gdy juz bedziesz wyciagal wyniki z bazy
+		$this->verifyUserSession();
+		
+		$title = "forum of ".SITE_NAME;
+		$ActiveMenuCategory="MAIN";
+		$ActiveMenuSubCategory="forum";
+		
+		if($forumid==false){
+			require("app/views/forum/forum_list.view.php");
+		}else{
+			/*
+			$db = new DB();
+			$db->query("SELECT t.*, p.author, p.date, p.name FROM thread t, post p WHERE t.forum_id = :forum_id AND p.id = t.last_post ORDER BY p.sticky DESC, p.date DESC");
+			$db->bind(':forum_id', $forumid);
+			$threads = $db->resultSet();
+			*/
+			
+			require("app/views/forum/forum_threads.view.php");
+			return;
+		}
 	}
 	
 	public function showForumEdit(){

@@ -3,7 +3,7 @@
 define("SITE_NAME", "Rechniewskiego-United"); // site name
 define("ENCRYPTION_KEY", "!*&%#(^%*#");//better not change that after first User registration
 
-define("DEVELOPER_MODE", "OFF");//shows sessions and stuff ON/OFF
+define("DEVELOPER_MODE", "ON");//shows sessions and stuff ON/OFF
 
 // Define DB Params
 define("DB_HOST", "localhost");

@@ -13,7 +13,7 @@ aktywacja konta
 on/off
 
 miasto mozna podac tylko i wylacznie po podaniu panstwa
-zrobic HTML PARSER KODUJACY DLA ZNAKOW HTML NA BB I ODKODUJACY DLA ZNAKOW BB NA HTML
+zrobic HTML PARSER KODUJACY DLA ZNAKOW HTML NA BB I ODKODUJACY DLA ZNAKOW BB NA HTML - tylko przy pisaniu wiadomosci na socialu i w pw moze i na forum i do podstron
 
 zrobic routy w innym folderze, kazdy route zrobic w innym pliku w ifie i includowac wszystkie, to pozwoli instalowac routy jako osobne mod packi
 
@@ -24,3 +24,10 @@ zamienic editForumForm na editForum a editForum na editForumSend czy cos, i tak 
 dodac mozliwosc wyswietlania i dodawania wlasnych skryptow na podstronach - wordpress tego nie ma
 
 zmienic Number na Order
+
+przy usuwaniu categorii kasowac forum pod nia nalezace a wraz z nim kasowac wszystkie topici ktore tam sa
+
+
+co to jest mobile nav on pod kazdym mainem?
+
+spr. czy na pewno filtruje znaki html przy post i get

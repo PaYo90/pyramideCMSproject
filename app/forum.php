@@ -25,4 +25,11 @@ class Forum{
 		$name = $db -> single();
 		return $name['name'];
 	}
+	
+	public function selectThreads($forumId=1){
+		$db = new DB();
+		$db -> query("SELECT t.*, (SELECT max(p.made_date) FROM posts p WHERE p.thread_id = t.id) AS last_post, (SELECT p.author FROM posts p WHERE p.thread_id = t.id ORDER BY p.made_date DESC LIMIT 1) AS post_author, (SELECT p.content FROM posts p WHERE p.thread_id = t.id ORDER BY p.made_date DESC LIMIT 1) AS post_content FROM thread t WHERE t.forum_id = :forum_id ORDER BY t.sticky DESC, last_post DESC");
+		$db -> bind(':forum_id', $forumId);
+		return $db -> resultSet();
+	}
 }

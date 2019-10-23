@@ -38,7 +38,7 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
 								
 								foreach($categories as $kategoria){
 									
-									include("app/views/forum/forum_parts/forums_cathegory.view.php");
+									include("app/views/forum/forum_parts/forums_cathegory.php");
 									
 								}
 								?>

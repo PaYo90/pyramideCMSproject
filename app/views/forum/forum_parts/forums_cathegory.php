@@ -55,7 +55,7 @@
 
 											if($forums){
 												foreach($forums as $forum){
-													include('app/views/forum/forum_parts/forums.view.php'); 
+													include('app/views/forum/forum_parts/forum.php'); 
 												}
 											}
 											?>
