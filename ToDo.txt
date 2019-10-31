@@ -31,3 +31,5 @@ przy usuwaniu categorii kasowac forum pod nia nalezace a wraz z nim kasowac wszy
 co to jest mobile nav on pod kazdym mainem?
 
 spr. czy na pewno filtruje znaki html przy post i get
+
+zrobic skam biznes na paypalu ktory bedzie za pomoca api obslugiwal inna moja strone. Przekierowanie na strone paypala przez header() z tej drugiej domeny aby nikt sie nie kapnal!

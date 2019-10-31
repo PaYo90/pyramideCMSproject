@@ -1,40 +1,59 @@
 <div class="col-12">
                                                 <div class="row no-gutters row-grid align-items-stretch">
                                                     <div class="col-md">
-                                                        <div class="p-3">
+                                                        <div class="p-2">
+															<!--avatar dla topicu przed forum-->
+															<!--<div class="d-inline-flex align-middle mr-2">
+                                                                    <span class="profile-image-md d-block" style="background-image:url('http://<?php //echo ROOT_APP_URL;?>/img/demo/avatars/avatar-admin.png'); background-size: cover;"></span>
+                                                            </div>-->
                                                             <div class="d-flex flex-column">
-                                                                <a href="javascript:void(0)" class="fs-lg fw-500 d-flex align-items-start">
-                                                                    <?=$thread['name'];?> <?php if($thread['sticky'] > 0) {echo " <span class=\"badge badge-warning ml-auto\">Sticky</span>";} ?>
+																<a href="http://<?=ROOT_APP_URL;?>/thread/<?=$thread['id'];?>" class="fs-lg fw-500 d-flex align-items-start">
+                                                                    <?=$thread['name'];?>
+																	<?php if($thread['sticky'] > 0) {echo " <span class=\"badge badge-warning ml-auto\">Sticky</span>";} ?>
                                                                 </a>
                                                                 <div class="d-block text-muted fs-sm">
                                                                     Started by <a href="javascript:void(0);" class="text-info"><?=$thread['author'];?> </a> on <?=$thread['made_date'];?> 
                                                                 </div>
                                                             </div>
+															<?php if($thread['pages']>1){ ?>
                                                             <div class="d-flex">
                                                                 <ul class="pagination pagination-xs mb-0 mt-3 align-self-end">
-                                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                                    <li class="paginate_button page-item disabled px-0">…</li>
-                                                                    <li class="page-item"><a class="page-link" href="#">7</a></li>
-                                                                    <li class="page-item"><a class="page-link" href="#">25</a></li>
-                                                                    <li class="page-item">
-                                                                        <a class="page-link" href="#" aria-label="Next">
-                                                                            <span aria-hidden="true">Last page</span>
-                                                                        </a>
-                                                                    </li>
+                               	<?php
+									//PAGINATION
+									$paginationButtonShow = true;
+									for($i=1; $i <= $thread['pages']; $i++){ 
+									
+									if($i <= 3){
+										echo '<li class="page-item"><a class="page-link" href="#">'.$i.'</a></li>';
+									}elseif($thread['pages'] > 6 && $i < $thread['pages'] - 2 && $paginationButtonShow == true){
+										echo '<li class="paginate_button page-item px-0">sdf</li>';
+										$paginationButtonShow = false;
+									}elseif($i == $thread['pages']-1 || $i == $thread['pages']-2){
+										echo '<li class="page-item"><a class="page-link" href="#">'.$i.'</a></li>';
+									}else{
+										echo '<li class="page-item">';
+											echo '<a class="page-link" href="#" aria-label="Next">';
+											echo '<span aria-hidden="true">Last page</span>';
+                                            echo '</a>';
+                                        echo '</li>';
+									}
+									}?>
+                                                                    
+                                                                   
+                                    
                                                                 </ul>
                                                             </div>
+															<?php } ?>
                                                         </div>
                                                     </div>
                                                     <div class="col-4 col-md-2 col-xl-1 hidden-md-down">
-                                                        <div class="p-3 p-md-3">
+                                                        <div class="p-2 p-md-2">
                                                             <span class="d-block text-muted"><?=$thread['replies'];?>  <i>Replies</i></span>
                                                             <span class="d-block text-muted"><?=$thread['views'];?>  <i>Views</i></span>
                                                         </div>
                                                     </div>
                                                     <div class="col-8 col-md-3 hidden-md-down">
-                                                        <div class="p-3 p-md-3">
+                                                        <div class="p-2 p-md-2">
                                                             <div class="d-flex align-items-center">
                                                                 <div class="d-inline-block align-middle status status-success status-sm mr-2">
                                                                     <span class="profile-image-md rounded-circle d-block" style="background-image:url('http://<?=ROOT_APP_URL;?>/img/demo/avatars/avatar-admin.png'); background-size: cover;"></span>

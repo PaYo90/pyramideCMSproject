@@ -32,4 +32,25 @@ class Forum{
 		$db -> bind(':forum_id', $forumId);
 		return $db -> resultSet();
 	}
+	
+	public function selectPosts($threadId){
+		$db = new DB();
+		$db -> query("SELECT p.*, t.id as t_id, t.name FROM posts p, thread t WHERE p.thread_id = :tid AND t.id = p.thread_id ORDER BY id ASC");
+		$db -> bind (':tid', $threadId);
+		return $db -> resultSet();
+	}
+	
+	public function checkIfLiked($postId){
+		$db = new DB();
+		$db ->query("SELECT id FROM liked WHERE post_id = :post_id AND user_id = :user_id");
+		$db -> bind (':post_id', $postId);
+		$db -> bind (':user_id', $_SESSION['user']->id);
+		$check = $db -> single();
+		
+		if($check){
+			return false;
+		}else{
+			return true;
+		}
+	}
 }

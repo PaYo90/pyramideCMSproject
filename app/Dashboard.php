@@ -34,6 +34,12 @@ class Dashboard
 
 		if(empty($clean_url['1'])){ $clean_url['1']=""; }
 		if(empty($clean_url['2'])){ $clean_url['2']=""; }
+		if(empty($clean_url['3'])){ $clean_url['3']=""; }
+		if(empty($clean_url['4'])){ $clean_url['4']=""; }
+		if(empty($clean_url['5'])){ $clean_url['5']=""; }
+		if(empty($clean_url['6'])){ $clean_url['6']=""; }
+		
+		//dodac explode na # i sprawdzic czy mozna zrobic z tego kolejny cleanUrl do posta na require w show
 		
 		switch ($clean_url['1'])//ROUTES
 		{
@@ -139,6 +145,12 @@ class Dashboard
 			case "makeNewThread":
 				$this->makeNewThread($clean_url['2']);
 				break;
+			case "thread":
+				$this->showThread($clean_url['2']);
+				break;
+			case "like":
+				$this->like($clean_url['2'],$clean_url['3']);
+				break;
 			default:
 				$title = "ERROR 404 - ".SITE_NAME;
 				require("app/views/error_404.view.php");
@@ -146,6 +158,67 @@ class Dashboard
 				//dalsze inputy
 		}
 
+	}
+	
+	public function like($postid, $threadid){
+		$this->verifyUserSession();
+		
+		$db = new DB();
+		
+		$db -> query("SELECT likes FROM posts WHERE id = :postid");
+		$db -> bind (':postid', $postid);
+		$likes = $db -> single();
+		
+		$db -> query("SELECT * FROM liked WHERE post_id = :postid AND user_id = :userSession");
+		$db -> bind (':postid', $postid);
+		$db -> bind (':userSession', $_SESSION['user']->id);
+		$row = $db -> single();
+		
+		if($row==false){
+			$db -> query("INSERT INTO liked (post_id, user_id) VALUES (:postid, :userid)");
+			$db -> bind (':postid', $postid);
+			$db -> bind (':userid', $_SESSION['user']->id);
+			$db -> execute();
+			
+			$db -> query("UPDATE posts SET likes = :likes WHERE id = :postid");
+			$db -> bind (':likes', ++$likes['likes']);
+			$db -> bind (':postid', $postid);
+			$db -> execute();
+		}else{
+			$db -> query("DELETE FROM liked WHERE post_id = :postid AND user_id = :userid");
+			$db -> bind (':postid', $postid);
+			$db -> bind (':userid', $_SESSION['user']->id);
+			$db -> execute();
+			
+			$db -> query("UPDATE posts SET likes = :likes WHERE id = :postid");
+			$db -> bind (':likes', --$likes['likes']);
+			$db -> bind (':postid', $postid);
+			$db -> execute();
+		}
+		//echo $_SESSION['user']->id ." - ". var_dump($row);
+		header("Location:http://".ROOT_APP_URL."/thread/".$threadid."#".$postid);
+		return;
+		
+	}
+	
+	public function showThread($thread_id="error", $nr_posta=false){
+		$this->verifyUserSession();//zrobic aby wyszukiwalo czy jest yhread, jesli nie to error
+		
+		$title = "forum of ".SITE_NAME;
+		$ActiveMenuCategory="MAIN";
+		$ActiveMenuSubCategory="forum";
+		
+		if($thread_id=="error"){
+			$title = "ERROR 404 - ".SITE_NAME;
+			require("app/views/error_404.view.php");
+			return;
+		}
+		
+		$PHandler = new Forum();
+		$posts = $PHandler -> selectPosts($thread_id);
+		
+		require("app/views/forum/forum_thread.view.php");
+		return;
 	}
 	
 	public function makeNewThread($forumid){
