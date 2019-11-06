@@ -279,7 +279,7 @@ class Dashboard
 		$this->verifyUserSession();
 		
 		$db = new DB();
-		$db -> query("INSERT INTO thread (name, forum_id, author) VALUES (:name, :forum_id, :author)");
+		$db -> query("INSERT INTO thread (name, forum_id, author, made_date) VALUES (:name, :forum_id, :author, now())");
 		$db -> bind(':name', $this->post['ThreadName']);
 		$db -> bind(':forum_id', $forumid);
 		$db -> bind(':author', $this->post['UserName']);
@@ -290,6 +290,12 @@ class Dashboard
 		$db -> bind (':author', $this->post['UserName']);
 		$db -> bind (':content', $this->post['content']);
 		$db -> bind (':thread_id', $threadId);
+		$db -> execute();
+		$postId = $db -> lastInsertId();
+		
+		$db -> query("UPDATE thread SET last_post_id = :postId WHERE id = :threadId");
+		$db -> bind (':postId', $postId);
+		$db -> bind (':threadId', $threadId);
 		$db -> execute();
 		
 		header("Location:http://".ROOT_APP_URL."/forum/".$this->post['ForumId']."/".$threadId);
