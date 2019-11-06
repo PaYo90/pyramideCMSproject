@@ -54,9 +54,10 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
                                         <div class="row no-gutters row-grid">
                                             <!-- thread -->
                                            <?php
-											$thandle = new Aplikacja\Forum();
-											$threads = $thandle -> selectThreads($forumid);
+											
 											foreach($threads as $thread){
+												$postsnumber = $forum->countPosts($thread['id']);
+												$pagesnbr = ceil($postsnumber['posts_quantity'] / FORUM_PAGE_OFFSET);
 												include('app/views/forum/forum_parts/forum_thread.php');
 											}
 											?>
@@ -65,26 +66,55 @@ app\Page::upperContent($title,$ActiveMenuCategory,$ActiveMenuSubCategory);
                                         </div>
                                     </div>
                                 </div>
-                                <ul class="pagination mt-3">
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="#" aria-label="Previous">
-                                            <span aria-hidden="true"><i class="fal fa-chevron-left"></i></span>
-                                        </a>
-                                    </li>
-                                    <li class="page-item active" aria-current="page">
-                                        <span class="page-link">
-                                            1
-                                            <span class="sr-only">(current)</span>
-                                        </span>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Next">
-                                            <span aria-hidden="true"><i class="fal fa-chevron-right"></i></span>
-                                        </a>
-                                    </li>
-                                </ul>
+								
+								
+                                <?php
+								
+								if($paginationpages>1){
+									
+									echo'
+									<ul class="pagination mt-3">';
+										
+									echo '
+									<li class="page-item ';	if($forumpage==1) { echo 'disabled'; } echo'">
+											<a class="page-link" href="http://'.ROOT_APP_URL.'/forum/'.$forumid.'/'.--$forumpage.'" aria-label="Previous">
+												<span aria-hidden="true"><i class="fal fa-chevron-left"></i></span>
+											</a>
+										</li>';
+										
+										for($i=1; $i <= $paginationpages; $i++){
+											
+											if($i==$forumpage+1){
+												echo '
+												<li class="page-item active" aria-current="page">
+													<span class="page-link">
+														'.$i.'
+														<span class="sr-only">(current)</span>
+													</span>
+												</li>
+												';
+											}else{
+												echo '<li class="page-item"><a class="page-link" href="http://'.ROOT_APP_URL.'/forum/'.$forumid.'/'.$i.'">'.$i.'</a></li>';
+											}
+											
+										}
+										
+										if($forumpage+1<$paginationpages){
+											$page_id_next = $forumpage + 2;
+											echo '<li class="page-item">
+													<a class="page-link" href="http://'.ROOT_APP_URL.'/forum/'.$forumid.'/'.$page_id_next.'" aria-label="Next">
+													<span aria-hidden="true"><i class="fal fa-chevron-right"></i></span>
+													</a>
+												</li>';
+										}
+									echo '</ul>';
+									
+									
+								}
+								
+								?>
+								
+								
                             </div>
                         </div>
                     </main>

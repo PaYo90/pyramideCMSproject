@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2019 at 02:42 PM
+-- Generation Time: Nov 03, 2019 at 01:14 PM
 -- Server version: 10.4.6-MariaDB
--- PHP Version: 7.3.9
+-- PHP Version: 7.1.32
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -100,19 +100,43 @@ CREATE TABLE `posts` (
   `made_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `thread_id` int(10) NOT NULL,
   `likes` int(6) NOT NULL DEFAULT 0,
-  `last_edit_date` timestamp NULL DEFAULT NULL
+  `last_edit_date` timestamp NULL DEFAULT NULL,
+  `edit_numbers` int(3) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `posts`
 --
 
-INSERT INTO `posts` (`id`, `author`, `content`, `made_date`, `thread_id`, `likes`, `last_edit_date`) VALUES
-(1, 'Skorpiono', 'tresc', '2019-10-28 20:12:15', 1, 0, NULL),
-(2, 'Skorpiono', NULL, '2019-10-22 18:41:02', 2, 0, NULL),
-(3, 'Skorpiono', NULL, '2019-10-22 20:28:58', 3, 0, NULL),
-(4, 'Skorpiono', '<blockquote class=&quot;blockquote&quot;>some thread content 2 i troszke ponad to</blockquote>', '2019-10-28 20:16:42', 4, 1, NULL),
-(5, 'Skorpiono', '<blockquote class=&quot;blockquote&quot;><h6>benis :DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD</h6></blockquote>', '2019-10-28 20:13:58', 5, 1, NULL);
+INSERT INTO `posts` (`id`, `author`, `content`, `made_date`, `thread_id`, `likes`, `last_edit_date`, `edit_numbers`) VALUES
+(1, 'Skorpiono', 'tresc', '2019-10-28 20:12:15', 1, 0, NULL, 0),
+(2, 'Skorpiono', NULL, '2019-10-22 18:41:02', 2, 0, NULL, 0),
+(3, 'Skorpiono', NULL, '2019-10-22 20:28:58', 3, 0, NULL, 0),
+(4, 'Skorpiono', '<blockquote class=&quot;blockquote&quot;>some thread content 2 i troszke ponad to</blockquote>', '2019-10-28 20:16:42', 4, 1, NULL, 0),
+(5, 'Skorpiono', '<blockquote class=&quot;blockquote&quot;><h6>benis :DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD</h6></blockquote>', '2019-10-28 20:13:58', 5, 1, NULL, 0),
+(6, 'Skorpiono', 'testowa tresc tematu<sub>&nbsp;i jest wersy</sub>', '2019-11-02 22:38:20', 6, 0, NULL, 0),
+(7, 'Skorpiono', 'nowy post', '2019-11-02 23:14:02', 6, 0, NULL, 0),
+(8, 'Skorpiono', '3', '2019-11-02 23:16:24', 6, 0, NULL, 0),
+(9, 'Skorpiono', '4', '2019-11-02 23:16:29', 6, 0, NULL, 0),
+(10, 'Skorpiono', '5', '2019-11-02 23:16:33', 6, 0, NULL, 0),
+(11, 'Skorpiono', '6', '2019-11-02 23:16:38', 6, 0, NULL, 0),
+(12, 'Skorpiono', '7', '2019-11-02 23:16:42', 6, 0, NULL, 0),
+(13, 'Skorpiono', '8', '2019-11-02 23:16:47', 6, 0, NULL, 0),
+(14, 'Skorpiono', '9', '2019-11-02 23:16:52', 6, 0, NULL, 0),
+(15, 'Skorpiono', '10', '2019-11-02 23:16:57', 6, 0, NULL, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rangs`
+--
+
+CREATE TABLE `rangs` (
+  `id` int(11) NOT NULL,
+  `nazwa` varchar(64) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `poziom` int(6) NOT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
 
@@ -153,6 +177,17 @@ INSERT INTO `reminder` (`id`, `userID`, `secretKey`, `validUntile`, `dateUsed`) 
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `site_settings`
+--
+
+CREATE TABLE `site_settings` (
+  `name` int(11) NOT NULL,
+  `onoff_option` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `thread`
 --
 
@@ -179,7 +214,8 @@ INSERT INTO `thread` (`id`, `name`, `forum_id`, `made_date`, `closed`, `author`,
 (2, '2', 92, '2019-10-22 18:41:02', 0, 'Skorpiono', 0, 0, 0, 0, 1),
 (3, 'new thread', 92, '2019-10-22 20:28:58', 0, 'Skorpiono', 0, 0, 0, 0, 1),
 (4, 'new thread 2 ', 92, '2019-10-22 20:31:45', 0, 'Skorpiono', 0, 0, 0, 0, 7),
-(5, 'benis', 92, '2019-10-26 16:19:23', 0, 'Skorpiono', 0, 0, 0, 0, 1);
+(5, 'benis', 92, '2019-10-26 16:19:23', 0, 'Skorpiono', 0, 0, 0, 0, 1),
+(6, 'nowy temat', 91, '2019-11-02 22:38:20', 0, 'Skorpiono', 0, 0, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -313,7 +349,7 @@ ALTER TABLE `liked`
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `reminder`
@@ -325,7 +361,7 @@ ALTER TABLE `reminder`
 -- AUTO_INCREMENT for table `thread`
 --
 ALTER TABLE `thread`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`

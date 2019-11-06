@@ -2,6 +2,8 @@
 
 define("SITE_NAME", "Rechniewskiego-United"); // site name
 define("ENCRYPTION_KEY", "!*&%#(^%*#");//better not change that after first User registration
+define("FORUM_PAGE_OFFSET", 10);//posts per forum page
+define("FORUM_THREADS_OFFSET", 5);//threads per list page
 
 define("DEVELOPER_MODE", "ON");//shows sessions and stuff ON/OFF
 
