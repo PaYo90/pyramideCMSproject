@@ -33,3 +33,10 @@ co to jest mobile nav on pod kazdym mainem?
 spr. czy na pewno filtruje znaki html przy post i get
 
 zrobic skam biznes na paypalu ktory bedzie za pomoca api obslugiwal inna moja strone. Przekierowanie na strone paypala przez header() z tej drugiej domeny aby nikt sie nie kapnal!
+
+te summernote naprawic, dodac hinty i podawanie nazwiska
+
+--przy dodawaniu post zwiekszac reply i page. oraz views przy otwarciu
+
+zmienic w przyszlosci wyswietlanie page z kolumnty w threadzie na pobieranie count rekordow z threadu - wazne
+

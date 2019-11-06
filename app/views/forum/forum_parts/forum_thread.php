@@ -7,7 +7,7 @@
                                                                     <span class="profile-image-md d-block" style="background-image:url('http://<?php //echo ROOT_APP_URL;?>/img/demo/avatars/avatar-admin.png'); background-size: cover;"></span>
                                                             </div>-->
                                                             <div class="d-flex flex-column">
-																<a href="http://<?=ROOT_APP_URL;?>/thread/<?=$thread['id'];?>" class="fs-lg fw-500 d-flex align-items-start">
+																<a href="http://<?=ROOT_APP_URL;?>/thread/<?=$thread['id'];?>/1" class="fs-lg fw-500 d-flex align-items-start">
                                                                     <?=$thread['name'];?>
 																	<?php if($thread['sticky'] > 0) {echo " <span class=\"badge badge-warning ml-auto\">Sticky</span>";} ?>
                                                                 </a>
@@ -15,24 +15,25 @@
                                                                     Started by <a href="javascript:void(0);" class="text-info"><?=$thread['author'];?> </a> on <?=$thread['made_date'];?> 
                                                                 </div>
                                                             </div>
-															<?php if($thread['pages']>1){ ?>
+															<?php if($pagesnbr>1){ ?>
                                                             <div class="d-flex">
                                                                 <ul class="pagination pagination-xs mb-0 mt-3 align-self-end">
                                	<?php
 									//PAGINATION
 									$paginationButtonShow = true;
-									for($i=1; $i <= $thread['pages']; $i++){ 
+	
+									for($i=1; $i <= $pagesnbr; $i++){ 
 									
 									if($i <= 3){
-										echo '<li class="page-item"><a class="page-link" href="#">'.$i.'</a></li>';
-									}elseif($thread['pages'] > 6 && $i < $thread['pages'] - 2 && $paginationButtonShow == true){
+										echo '<li class="page-item"><a class="page-link" href="http://'.ROOT_APP_URL.'/thread/'.$thread['id'].'/'.$i.'">'.$i.'</a></li>';
+									}elseif($pagesnbr > 6 && $i < $pagesnbr - 2 && $paginationButtonShow == true){
 										echo '<li class="paginate_button page-item px-0">sdf</li>';
 										$paginationButtonShow = false;
-									}elseif($i == $thread['pages']-1 || $i == $thread['pages']-2){
-										echo '<li class="page-item"><a class="page-link" href="#">'.$i.'</a></li>';
+									}elseif($i == $pagesnbr-1 || $i == $thread['pages']-2){
+										echo '<li class="page-item"><a class="page-link" href="http://'.ROOT_APP_URL.'/thread/'.$thread['id'].'/'.$i.'">'.$i.'</a></li>';
 									}else{
 										echo '<li class="page-item">';
-											echo '<a class="page-link" href="#" aria-label="Next">';
+											echo '<a class="page-link" href="http://'.ROOT_APP_URL.'/thread/'.$thread['id'].'/'.$i.'" aria-label="Next">';
 											echo '<span aria-hidden="true">Last page</span>';
                                             echo '</a>';
                                         echo '</li>';
@@ -48,7 +49,7 @@
                                                     </div>
                                                     <div class="col-4 col-md-2 col-xl-1 hidden-md-down">
                                                         <div class="p-2 p-md-2">
-                                                            <span class="d-block text-muted"><?=$thread['replies'];?>  <i>Replies</i></span>
+                                                            <span class="d-block text-muted"><?=$postsnumber['posts_quantity'];?>  <i>Replies</i></span>
                                                             <span class="d-block text-muted"><?=$thread['views'];?>  <i>Views</i></span>
                                                         </div>
                                                     </div>

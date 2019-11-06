@@ -73,7 +73,7 @@ License: You must have a valid license purchased only from wrapbootstrap.com (li
                                             <div class="tab-content p-3">
                                             <div class="tab-pane fade active show" id="tab_default-1" role="tabpanel">
 											<div class="frame-wrap pe-0 border-0 m-0">
-												<form method="post" action="/searchUserAdmin"
+												<form method="post" action="/searchUserAdmin">
 												<div class="input-group col-sm-3 ">
 													<input data-action="toggle" name="searchAnything" type="text" class="form-control form-control-sm shadow-inset-4" id="" placeholder="Find User by anything">
 													<div class="input-group-append">

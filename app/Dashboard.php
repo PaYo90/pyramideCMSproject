@@ -32,7 +32,8 @@ class Dashboard
 
 		$clean_url = array_filter($urlArray);
 
-		if(empty($clean_url['1'])){ $clean_url['1']=""; }
+
+        if(empty($clean_url['1'])){ $clean_url['1']=""; }
 		if(empty($clean_url['2'])){ $clean_url['2']=""; }
 		if(empty($clean_url['3'])){ $clean_url['3']=""; }
 		if(empty($clean_url['4'])){ $clean_url['4']=""; }
@@ -104,7 +105,7 @@ class Dashboard
 				$this->searchUserAdmin($this->post['searchAnything']);
 				break;
 			case "forum":
-				$this->forum($clean_url['2']);
+				$this->forum($clean_url['2'],$clean_url['3']);
 				break;
 			case "makeNewCategoryForm":
 				$this->showMakeNewCategory();
@@ -146,11 +147,20 @@ class Dashboard
 				$this->makeNewThread($clean_url['2']);
 				break;
 			case "thread":
-				$this->showThread($clean_url['2']);
+				$this->showThread($clean_url['2'], $clean_url['3']);
 				break;
 			case "like":
-				$this->like($clean_url['2'],$clean_url['3']);
+				$this->like($clean_url['2'],$clean_url['3'],$clean_url['4']);
 				break;
+			case "addPost":
+				$this->addPost();
+				break;
+            case "addInscription":
+                $this->addInscriptionToDiary();
+                break;
+            case "addCommentToInscription":
+                Diary::addComment($this->post['post_id'],$this->post['comment'],$this->post['author_id']);
+                break;
 			default:
 				$title = "ERROR 404 - ".SITE_NAME;
 				require("app/views/error_404.view.php");
@@ -159,13 +169,47 @@ class Dashboard
 		}
 
 	}
-	
-	public function like($postid, $threadid){
+	public function addInscriptionToDiary(){
+	    $this->verifyUserSession();
+
+	    $db = new DB();
+	    $db -> query("INSERT INTO diary_posts (desired_profile_id, content, author_id) VALUES (:d_p_id, :content, :autor_id)");
+	    $db -> bind(':content', $this->post['diary_inscription']);
+	    $db -> bind(':autor_id', $this->post['autor_id']);
+	    $db -> bind(':d_p_id', $this->post['desired_profile_id']);
+	    $db -> execute();
+
+	    //@TODO -> Jesli zrobie z tego myspace'a to Location dac na podstrone usera
+        header("Location:http://".ROOT_APP_URL."/profile");
+        return false;
+    }
+
+	public function addPost(){
 		$this->verifyUserSession();
 		
 		$db = new DB();
 		
-		$db -> query("SELECT likes FROM posts WHERE id = :postid");
+		$db -> query("INSERT INTO f_posts (author, content, made_date, thread_id) VALUES (:autor, :kontent, now(), :idtematu)");
+		$db -> bind (':autor', $this->post['UserName']);
+		$db -> bind (':kontent', $this->post['Content']);
+		$db -> bind (':idtematu', $this->post['ThreadId']);
+		$db->execute();
+		
+		$forum = new Forum();
+		$postsnbr = $forum -> countPosts($this->post['ThreadId']);
+		$pagenbr = ceil($postsnbr['posts_quantity'] / FORUM_PAGE_OFFSET);
+		
+		
+		header("Location:http://".ROOT_APP_URL."/thread/".$this->post['ThreadId']."/".$pagenbr);
+		return;
+	}
+	
+	public function like($postid, $threadid, $page_id){
+		$this->verifyUserSession();
+		
+		$db = new DB();
+		
+		$db -> query("SELECT likes FROM f_posts WHERE id = :postid");
 		$db -> bind (':postid', $postid);
 		$likes = $db -> single();
 		
@@ -180,7 +224,7 @@ class Dashboard
 			$db -> bind (':userid', $_SESSION['user']->id);
 			$db -> execute();
 			
-			$db -> query("UPDATE posts SET likes = :likes WHERE id = :postid");
+			$db -> query("UPDATE f_posts SET likes = :likes WHERE id = :postid");
 			$db -> bind (':likes', ++$likes['likes']);
 			$db -> bind (':postid', $postid);
 			$db -> execute();
@@ -190,19 +234,24 @@ class Dashboard
 			$db -> bind (':userid', $_SESSION['user']->id);
 			$db -> execute();
 			
-			$db -> query("UPDATE posts SET likes = :likes WHERE id = :postid");
+			$db -> query("UPDATE f_posts SET likes = :likes WHERE id = :postid");
 			$db -> bind (':likes', --$likes['likes']);
 			$db -> bind (':postid', $postid);
 			$db -> execute();
 		}
+		
+		
 		//echo $_SESSION['user']->id ." - ". var_dump($row);
-		header("Location:http://".ROOT_APP_URL."/thread/".$threadid."#".$postid);
+		header("Location:http://".ROOT_APP_URL."/thread/".$threadid."/".$page_id."#".$postid);
 		return;
 		
 	}
 	
-	public function showThread($thread_id="error", $nr_posta=false){
-		$this->verifyUserSession();//zrobic aby wyszukiwalo czy jest yhread, jesli nie to error
+	public function showThread($thread_id = "error",
+                               $page_id = 1){
+		// Poprawic url aby bez wpisanej strony wyswietlalo strone 1
+		
+		$this->verifyUserSession();//zrobic aby wyszukiwalo czy jest yhread, jesli nie to error przy roznych urlach
 		
 		$title = "forum of ".SITE_NAME;
 		$ActiveMenuCategory="MAIN";
@@ -215,7 +264,12 @@ class Dashboard
 		}
 		
 		$PHandler = new Forum();
-		$posts = $PHandler -> selectPosts($thread_id);
+		$posts = $PHandler -> selectPosts($thread_id, $page_id);
+		//$pagesnr = $PHandler -> countPagesOfThread($thread_id);
+		
+		$PHandler -> addView($thread_id);
+		$postsnumber = $PHandler->countPosts($thread_id);
+		$pagesnbr = ceil($postsnumber['posts_quantity'] / FORUM_PAGE_OFFSET);
 		
 		require("app/views/forum/forum_thread.view.php");
 		return;
@@ -232,7 +286,7 @@ class Dashboard
 		$db -> execute();
 		$threadId = $db -> lastInsertId();
 		
-		$db -> query("INSERT INTO posts (author, content, made_date, thread_id) VALUES (:author, :content, now(), :thread_id)");
+		$db -> query("INSERT INTO f_posts (author, content, made_date, thread_id) VALUES (:author, :content, now(), :thread_id)");
 		$db -> bind (':author', $this->post['UserName']);
 		$db -> bind (':content', $this->post['content']);
 		$db -> bind (':thread_id', $threadId);
@@ -252,13 +306,23 @@ class Dashboard
 		require("app/views/forum/forum_parts/forum_new_thread.php");
 		return;
 	}
-	
-	public function forum($forumid=false){//dodac 404, gdy juz bedziesz wyciagal wyniki z bazy
+
+	public function forum($forumid = false,
+                          $forumpage){//dodac 404, gdy juz bedziesz wyciagal wyniki z bazy
 		$this->verifyUserSession();
-		
+
+		if ($forumpage == ""){
+		    $forumpage = 1;
+        }
+
 		$title = "forum of ".SITE_NAME;
 		$ActiveMenuCategory="MAIN";
 		$ActiveMenuSubCategory="forum";
+		
+		$forum = new Forum();
+		$threads = $forum -> selectThreads($forumid, $forumpage);
+		$ilosctematow = $forum -> countThreads($forumid);
+		$paginationpages = ceil($ilosctematow['ilosc'] / FORUM_THREADS_OFFSET);						
 		
 		if($forumid==false){
 			require("app/views/forum/forum_list.view.php");
@@ -274,7 +338,7 @@ class Dashboard
 			return;
 		}
 	}
-	
+		
 	public function showForumEdit(){
 		$this->isAdmin();
 		
@@ -479,6 +543,8 @@ class Dashboard
 		$db->query("SELECT * FROM users WHERE username = :username");
 		$db->bind(':username', $user);
 		$row = $db->single();
+
+
 		
 		//zrobix tutaj country parser if empty
 		if(isset($row['country'])){
@@ -894,7 +960,7 @@ class Dashboard
         $this->isAdmin();
        
         $db = new DB();
-        $db -> query("SELECT id,kolejnosc FROM forums WHERE kat_id = :UnderCategory ORDER BY kolejnosc ASC");
+        $db -> query("SELECT id,kolejnosc FROM forum WHERE kat_id = :UnderCategory ORDER BY kolejnosc ASC");
         $db -> bind(':UnderCategory', $underCategory);
         return $db -> resultSet();
     }
@@ -975,7 +1041,7 @@ class Dashboard
 		
 		$db = new DB();
 		
-		$db -> query("SELECT * FROM forums WHERE kolejnosc >= :kolejnosc AND kat_id = :kat_id ORDER BY kolejnosc DESC");
+		$db -> query("SELECT * FROM forum WHERE kolejnosc >= :kolejnosc AND kat_id = :kat_id ORDER BY kolejnosc DESC");
 		$db -> bind (':kolejnosc', $this->post['ForumNumber']);
 		$db -> bind (':kat_id', $this->post['KatID']);
 		$zmianaKolejnosci = $db->resultSet();
@@ -983,13 +1049,13 @@ class Dashboard
 		foreach($zmianaKolejnosci as $row){
 			$row['kolejnosc']++;
 			
-			$db -> query("UPDATE forums SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+			$db -> query("UPDATE forum SET kolejnosc = :kolejnoscNowa WHERE id = :id");
 			$db -> bind ('kolejnoscNowa', $row['kolejnosc']);
 			$db -> bind (':id', $row['id']);
 			$db -> execute();
 			
 		}
-		$db -> query("INSERT INTO forums (name, description, ikona, kat_id, kolejnosc) VALUES (:name, :description, :icon, :katid, :kolejnosc)");
+		$db -> query("INSERT INTO forum (name, description, ikona, kat_id, kolejnosc) VALUES (:name, :description, :icon, :katid, :kolejnosc)");
 		$db -> bind (':name', $this->post['ForumName']);
 		$db -> bind (':description', $this->post['ForumDesc']);
 		$db -> bind (':icon', $this->post['Icon']);
@@ -1016,7 +1082,7 @@ class Dashboard
 		
 		if($this->post['ForumNewNumber'] > $this->post['ForumOldNumber']){
 			
-			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc > :ForumOldNumber AND kolejnosc <= :ForumNewNumber ORDER BY kolejnosc ASC");
+			$db->query("SELECT id,kolejnosc FROM forum WHERE kolejnosc > :ForumOldNumber AND kolejnosc <= :ForumNewNumber ORDER BY kolejnosc ASC");
 			$db->bind(':ForumOldNumber', $this->post['ForumOldNumber']);
 			$db->bind(':ForumNewNumber', $this->post['ForumNewNumber']);
 			$resultset = $db->resultSet();
@@ -1024,7 +1090,7 @@ class Dashboard
 			foreach($resultset as $row){
 				$row['kolejnosc']--;
 				
-				$db->query("UPDATE forums SET kolejnosc = :NewORDER WHERE id = :ForumID");
+				$db->query("UPDATE forum SET kolejnosc = :NewORDER WHERE id = :ForumID");
 				$db->bind(':NewORDER', $row['kolejnosc']);
 				$db->bind(':ForumID', $row['id']);
 				$db->execute();
@@ -1033,7 +1099,7 @@ class Dashboard
 			
 		}elseif($this->post['ForumNewNumber'] < $this->post['ForumOldNumber']){
 			
-			$db->query("SELECT id,kolejnosc FROM forums WHERE kolejnosc < :ForumOldNumber AND kolejnosc >= :ForumNewNumber ORDER BY kolejnosc ASC");
+			$db->query("SELECT id,kolejnosc FROM forum WHERE kolejnosc < :ForumOldNumber AND kolejnosc >= :ForumNewNumber ORDER BY kolejnosc ASC");
 			$db->bind(':ForumOldNumber', $this->post['ForumOldNumber']);
 			$db->bind(':ForumNewNumber', $this->post['ForumNewNumber']);
 			$resultset = $db->resultSet();
@@ -1041,7 +1107,7 @@ class Dashboard
 			foreach($resultset as $row){
 				$row['kolejnosc']++;
 				
-				$db->query("UPDATE forums SET kolejnosc = :NewORDER WHERE id = :ForumID");
+				$db->query("UPDATE forum SET kolejnosc = :NewORDER WHERE id = :ForumID");
 				$db->bind(':NewORDER', $row['kolejnosc']);
 				$db->bind(':ForumID', $row['id']);
 				$db->execute();
@@ -1049,7 +1115,7 @@ class Dashboard
 			}
 		}
 		
-		$db->query("UPDATE forums SET name = :NewName, description = :NewDesc, ikona = :NewIcon, kolejnosc = :NewOrder WHERE id = :ID");
+		$db->query("UPDATE forum SET name = :NewName, description = :NewDesc, ikona = :NewIcon, kolejnosc = :NewOrder WHERE id = :ID");
 		$db->bind(':NewName',$this->post['ForumNewName']);
 		$db->bind(':NewDesc',$this->post['ForumNewDesc']);
 		$db->bind(':NewIcon',$this->post['NewIcon']);
@@ -1068,7 +1134,7 @@ class Dashboard
 		
 		$db = new DB();
 		
-		$db -> query("DELETE FROM forums WHERE id = :id");
+		$db -> query("DELETE FROM forum WHERE id = :id");
 		$db -> bind(':id', $this->get['id']);
 		$db -> execute();
 		
@@ -1076,14 +1142,14 @@ class Dashboard
 		Messages::setSuccess("Forum usuniete");
 		}
 		
-		$db -> query("SELECT * FROM forums WHERE kolejnosc > :kolejnosc_forum ORDER BY kolejnosc ASC");
+		$db -> query("SELECT * FROM forum WHERE kolejnosc > :kolejnosc_forum ORDER BY kolejnosc ASC");
 		$db -> bind (':kolejnosc_forum', $this->get['kolejnosc']);
 		$zmianaKolejnosci = $db->resultSet();
 		
 		if($zmianaKolejnosci){
 			foreach($zmianaKolejnosci as $row){
 				
-				$db -> query("UPDATE forums SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+				$db -> query("UPDATE forum SET kolejnosc = :kolejnoscNowa WHERE id = :id");
 				$db -> bind (':kolejnoscNowa', --$row['kolejnosc']);
 				$db -> bind (':id', $row['id']);
 				$db -> execute();
@@ -1099,17 +1165,17 @@ class Dashboard
 		
 		$db = new DB();
 		
-		$db->query("SELECT kolejnosc FROM forums WHERE id = :ForumID ORDER BY kolejnosc ASC");
+		$db->query("SELECT kolejnosc FROM forum WHERE id = :ForumID ORDER BY kolejnosc ASC");
 		$db->bind(':ForumID', $this->post['ForumID']);
 		$ForumKolejnosc = $db->single();
 		
-		$db->query("SELECT kolejnosc FROM forums WHERE kat_id = :katid ORDER BY kolejnosc DESC LIMIT 1");
+		$db->query("SELECT kolejnosc FROM forum WHERE kat_id = :katid ORDER BY kolejnosc DESC LIMIT 1");
 		$db->bind(":katid", $this->post['NewKatID']);//new category
 		$BiggestForKol = $db->resultSet();
 		
 		if(empty($BiggestForKol)){ $BiggestForKol['0']['kolejnosc']=0;}
 		
-		$db -> query("UPDATE forums SET kat_id = :katid, kolejnosc = :NowaKol WHERE id = :ID");
+		$db -> query("UPDATE forum SET kat_id = :katid, kolejnosc = :NowaKol WHERE id = :ID");
 		$db->bind(':katid', $this->post['NewKatID']);//new category
 		$db->bind(':NowaKol', ++$BiggestForKol['0']['kolejnosc']);//last record of order in new cat
 		$db->bind(':ID', $this->post['ForumID']);
@@ -1121,14 +1187,14 @@ class Dashboard
 			Messages::setError("Nie dokonano żadnych zmian");
 		}
 		
-		$db->query("SELECT id, kolejnosc FROM forums WHERE kat_id = :katid AND kolejnosc > :ForumKolejnosc ORDER BY kolejnosc ASC");
+		$db->query("SELECT id, kolejnosc FROM forum WHERE kat_id = :katid AND kolejnosc > :ForumKolejnosc ORDER BY kolejnosc ASC");
 		$db->bind(":katid", $this->post['OldKatID']);
 		$db->bind(":ForumKolejnosc", $ForumKolejnosc['kolejnosc']);
 		$wyniki = $db->resultSet();
 		
 		foreach($wyniki as $row){
 			
-                $db -> query("UPDATE forums SET kolejnosc = :kolejnoscNowa WHERE id = :id");
+                $db -> query("UPDATE forum SET kolejnosc = :kolejnoscNowa WHERE id = :id");
                 $db -> bind(':kolejnoscNowa', --$row['kolejnosc']);
                 $db -> bind(':id', $row['id']);
                 $db -> execute();
@@ -1210,7 +1276,7 @@ class Dashboard
 	public function takeForumCredentials($forumid){
 		$db = new DB();
 		
-		$db -> query ("SELECT * FROM forums WHERE id = :forumid");
+		$db -> query ("SELECT * FROM forum WHERE id = :forumid");
 		$db -> bind (':forumid', $forumid);
 		return $db -> single();
 	}
