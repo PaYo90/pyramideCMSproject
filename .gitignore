@@ -1,0 +1,6 @@
+*.rar
+*.zip
+.idea/*
+_NOT_FROM/*
+
+
