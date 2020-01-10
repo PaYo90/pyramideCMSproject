@@ -1,0 +1,110 @@
+1-credentials change
+2-dodac zamykanie sesji po 20? minutach
+3-zrobic aby linki ze stopki prowadzily do linka ktory cie tu zaprosil (moze zapisz go w coockie?)
+4 - dodac linka do netykiety! 
+5. te linki w css zamienic na jakis normalnie wygladajacy tekst
+6. zrobic dynamniczne ustawianie jezyka w tagu html na wszystkich podstronach
+
+7 - zmienic confirmation page na inny
+
+mojaksywa moze sie powtarzac
+przycisk powrotu do logowania w passwordreset
+aktywacja konta
+on/off
+
+miasto mozna podac tylko i wylacznie po podaniu panstwa
+zrobic HTML PARSER KODUJACY DLA ZNAKOW HTML NA BB I ODKODUJACY DLA ZNAKOW BB NA HTML - tylko przy pisaniu wiadomosci na socialu i w pw moze i na forum i do podstron
+
+zrobic routy w innym folderze, kazdy route zrobic w innym pliku w ifie i includowac wszystkie, to pozwoli instalowac routy jako osobne mod packi
+
+poczytaj o security w php
+zrobic edycje i tworzenie kategorii/forum responsywne
+zamienic editForumForm na editForum a editForum na editForumSend czy cos, i tak cala reszte
+
+dodac mozliwosc wyswietlania i dodawania wlasnych skryptow na podstronach - wordpress tego nie ma
+
+zmienic Number na Order
+
+przy usuwaniu categorii kasowac forum pod nia nalezace a wraz z nim kasowac wszystkie topici ktore tam sa
+
+
+co to jest mobile nav on pod kazdym mainem?
+
+SECURITY - Polaczenie sie z glownym serverem ktory bedzie zliczal czy ktos zrobil strone bez aktywnego klucza?
+
+spr. czy na pewno filtruje znaki html przy post i get
+
+zrobic skam biznes na paypalu ktory bedzie za pomoca api obslugiwal inna moja strone. Przekierowanie na strone paypala przez header() z tej drugiej domeny aby nikt sie nie kapnal!
+
+, dodac hinty i podawanie nazwiska
+
+zrobic liste filmow do spolecznosci, ktora gosc bedzie wupelnial codziennie ktora bedzie pojawiala sie ww gornym prawym rogu profilu aby kazdy wypelnial co dzis obejrzal i dodawal do bazy danych lista filmow bedzie pobierana z imdb albo filweb
+Ocena: Szmira, kiepski, nie zly, dobry, doskonaly obok dzielo sztuki
+ocena 1-5, z dodatkowa mozliwoscia zaznaczenia dzielo sztuki
+dzielo sztuki czerwona gwiazdka, zwykle nie wiem
+
+--przy dodawaniu post zwiekszac reply i page. oraz views przy otwarciu
+
+zmienic w przyszlosci wyswietlanie page z kolumnty w threadzie na pobieranie count rekordow z threadu - wazne
+
+linki wewnetrzbe przekierowujace na strony zew.
+
+rozdzielic modele od kontrolerow i wrzucic w osobne foldery
+
+przemyslec cala responsywnosc wszystkich elementow, oraz ustawienia spolecznosci na profile
+
+uzyc select2 do wyszukiwania krajow w select option na profilu i przy rejestracji
+
+tabela uzytkownikow w panelu admina, ma byc plywajaca? bootstrap chyba ma ta opcje albo ten template. poszukaj, nie musisz miec zadnego dodatkowego css'a
+
+dac dokumentacje na strone cmsa a w niej info z smartadmina i inne
+
+napisac - gratulacje napisales swoj pierwszy post w modalu - info o osiagnietej randze jesli sie taka zdobylo i zyczyc owocnej aktywnosci na forum!
+ustawic czy cos takiego wyswietlac w ustawieniach forum
+
+wyswietlic BB code przy widoku - zrobione
+
+linki w diary nie poddaja sie bb code
+
+statystyki
+ty odwiedziles, cie odwiedzono
+
+Profile
+na srednim ekranie zrobic przejscie od razu na dol do postow, na malym zrobic okienko z komiksami po lewej, po prawej na srednim i duzym
+
+zainstaluj statistic i policz linie kodu
+
+POUSUWAC NIE POINSTALOWANE PLUGINY Z CSS I JSA ABY NIE KORZYSTALI Z NIE KUPIONYCH MODOW!
+
+zrobic widoczny w kodzie serial key ktory mozna przypisac do konkretnego mejla, osoby oraz domeny aby mozna bylo sprawdzic czy ktos ma licencje na mojego moda.
+
+w cms zrobic roznego rodzaju wybory wygladu dla poszczegolnych komponentow - miedzy innymi to:
+https://www.youtube.com/watch?v=UcHWHzZh7Sc&feature=youtu.be&fbclid=IwAR1jGeVmvQFPt_aF5AsrVzykLdPhioTbwJVPXaG8dC6tBXkDvS_RG9g-hVg
+
+galeria na haslo
+
+wynajac kogos kto doda komentarze do kazdego zdjecia w galerii
+
+linki do profili z nazwy usera
+
+moze po prostu zrobic require z upper i lower content - pomysl
+
+zrobic wyszukiwanie w tresci posta forum poprzez jsa ktory znajdzie od razu
+
+ustawic maksimum dla posiadanych zdjec
+
+brac tresc wymienna z bazy danych i jesli jakis mode bedzie dodawal kawalek kodu np. do menu, to po instalacji moda wczyta go z bd
+
+zrobic aby edycja podnosila post do gory (zaznaczone edycja)
+
+liczenie znakow w postach i na facebooku
+
+zrobic Txt to speach na stronie
+
+Zamiast social media, i Prawego menu uzytkownik bedzie mogl wybrac wyswieltanie swojej mini strony? Oraz Artykułów które napisał. W postaci powiedzmy newsfeeda. Każdy artykuł bedzie mógł zostać wysłany do administratora strony aby ten go zaakceptował jako artykuł na stronę główną, który pojawi się w dziale np.? Artykuły!? Albo na landing page'u albo na dashboardzie analytics
+
+spr. wysylanie obrazkow przez summer note. na forum
+
+dodaj giphy do prywatnych wiadomosci
+
+Aby uniknac problemow z security, musisz sprawdzic czy nigdzie nie jest przekazywany ID uzytkownika poprzez form, gdy tak jest zrob aby bylo to robione w skrypcie po stronie servera, aby nie wysylac forma na jakiegos innego usera
