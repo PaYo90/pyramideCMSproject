@@ -1,4 +1,0 @@
-Options +FollowSymLinks
-RewriteEngine on
-
-RewriteRule ^([a-zA-Z0-9]*)/?$ index.php [QSA]
