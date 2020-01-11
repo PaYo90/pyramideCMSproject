@@ -1,0 +1,37 @@
+1-credentials change
+2-dodac zamykanie sesji po 20? minutach
+3-zrobic aby linki ze stopki prowadzily do linka ktory cie tu zaprosil (moze zapisz go w coockie?)
+4 - dodac linka do netykiety! 
+5. te linki w css zamienic na jakis normalnie wygladajacy tekst
+6. zrobic dynamniczne ustawianie jezyka w tagu html na wszystkich podstronach
+
+7 - zmienic confirmation page na inny
+
+mojaksywa moze sie powtarzac
+przycisk powrotu do logowania w passwordreset
+aktywacja konta
+on/off
+
+miasto mozna podac tylko i wylacznie po podaniu panstwa
+zrobic HTML PARSER KODUJACY DLA ZNAKOW HTML NA BB I ODKODUJACY DLA ZNAKOW BB NA HTML - tylko przy pisaniu wiadomosci na socialu i w pw moze i na forum i do podstron
+
+zrobic routy w innym folderze, kazdy route zrobic w innym pliku w ifie i includowac wszystkie, to pozwoli instalowac routy jako osobne mod packi
+
+poczytaj o security w php
+zrobic edycje i tworzenie kategorii/forum responsywne
+zamienic editForumForm na editForum a editForum na editForumSend czy cos, i tak cala reszte
+
+dodac mozliwosc wyswietlania i dodawania wlasnych skryptow na podstronach - wordpress tego nie ma
+
+zmienic Number na Order
+
+przy usuwaniu categorii kasowac forum pod nia nalezace a wraz z nim kasowac wszystkie topici ktore tam sa
+
+
+co to jest mobile nav on pod kazdym mainem?
+
+spr. czy na pewno filtruje znaki html przy post i get
+
+zrobic skam biznes na paypalu ktory bedzie za pomoca api obslugiwal inna moja strone. Przekierowanie na strone paypala przez header() z tej drugiej domeny aby nikt sie nie kapnal!
+
+te summernote naprawic, dodac hinty i podawanie nazwiska

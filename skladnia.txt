@@ -65,18 +65,19 @@ class Dashboard
 	
 	public function showLogin()	{
 		$title = "Logowanie"." - ".SITE_NAME;
-		
-		require("app/views/login.view.php");
+
+		eval('?>'.CodeParser::sting_code(FileReader::read("app/views/login.view.php")));
 	}
 	public function showRegister()	{
 		$title = "Rejestracja"." - ".SITE_NAME;
-		
-		require("app/views/register.view.php");
+
+		eval('?>'.CodeParser::sting_code(FileReader::read("app/views/register.view.php")));
+
 	}
 	public function showDashboard()	{
 		$title = "Tablica informacyjna"." - ".SITE_NAME;
-		
-		require("app/views/dashboard.view.php");
+
+		eval('?>'.CodeParser::sting_code(FileReader::read("app/views/dashboard.view.php")));
 	}
 	private function showProfile($zmienne)	{
 		$title = "Profile"." - ".SITE_NAME;
@@ -94,8 +95,8 @@ class Dashboard
 		$row = $db->single();
 		
 		$panstwo = new countryParser($row['country']);
-		
-		require("app/views/profile.view.php");
+
+		eval('?>'.CodeParser::sting_code(FileReader::read("app/views/profile.view.php")));
 	}
 	
 	private function register()	{

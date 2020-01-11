@@ -15,6 +15,6 @@ class RequestProcessor
 	}
 	
 	public function processLandingRequest($request) {
-		require("landingpage.view.php");
+        eval('?>'.CodeParser::sting_code(FileReader::read("landingpage.view.php")));
 	}
 }

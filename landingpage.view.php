@@ -21,14 +21,14 @@ License: You must have a valid license purchased only from wrapbootstrap.com (li
         <!-- Remove Tap Highlight on Windows Phone IE -->
         <meta name="msapplication-tap-highlight" content="no">
         <!-- base css -->
-        <link rel="stylesheet" media="screen, print" href="css/vendors.bundle.css">
-        <link rel="stylesheet" media="screen, print" href="css/app.bundle.css">
+        <link rel="stylesheet" media="screen, print" href="themes/smartadmin/css/vendors.bundle.css">
+        <link rel="stylesheet" media="screen, print" href="themes/smartadmin/css/app.bundle.css">
         <!-- Place favicon.ico in the root directory -->
         <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
         <link rel="mask-icon" href="img/favicon/safari-pinned-tab.svg" color="#5bbad5">
         <!-- Optional: page related CSS-->
-        <link rel="stylesheet" media="screen, print" href="css/fa-brands.css">
+        <link rel="stylesheet" media="screen, print" href="themes/smartadmin/css/fa-brands.css">
     </head>
     <body>
         <div class="page-wrapper">
@@ -135,8 +135,8 @@ License: You must have a valid license purchased only from wrapbootstrap.com (li
 						+ waves.js (extension)
 						+ smartpanels.js (extension)
 						+ src/../jquery-snippets.js (core) -->
-        <script src="js/vendors.bundle.js"></script>
-        <script src="js/app.bundle.js"></script>
+        <script src="themes/smartadmin/js/vendors.bundle.js"></script>
+        <script src="themes/smartadmin/js/app.bundle.js"></script>
         <script>
             $("#js-login-btn").click(function(event)
             {

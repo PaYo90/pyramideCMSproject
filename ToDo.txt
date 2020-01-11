@@ -108,3 +108,5 @@ spr. wysylanie obrazkow przez summer note. na forum
 dodaj giphy do prywatnych wiadomosci
 
 Aby uniknac problemow z security, musisz sprawdzic czy nigdzie nie jest przekazywany ID uzytkownika poprzez form, gdy tak jest zrob aby bylo to robione w skrypcie po stronie servera, aby nie wysylac forma na jakiegos innego usera
+
+Przechowywanie ustawień kośmetycznych użytkownika jako string w jednym rekordzie bazy danych, np. "theme:dark; font: light; logo:hidden;"

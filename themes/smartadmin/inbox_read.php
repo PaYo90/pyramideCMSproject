@@ -44,10 +44,10 @@ app\Page::upperContent( $title, $ActiveMenuCategory, $ActiveMenuSubCategory,1,0,
                 <!-- inbox button shortcut -->
                 <div class="d-flex flex-wrap align-items-center pl-2 pr-3 py-2 px-sm-4 pr-lg-5 pl-lg-0 border-faded border-top-0 border-left-0 border-right-0">
                     <div class="flex-1 d-flex align-items-center">
-                        <a href="page_inbox_general.html" class="btn btn-icon rounded-circle mr-2 mr-lg-3">
+                        <a href="http://{{ROOT_APP_URL}}/inbox" class="btn btn-icon rounded-circle mr-2 mr-lg-3">
                             <i class="fas fa-arrow-left fs-lg"></i>
                         </a>
-                        <a href="javascript:void(0);" class="btn btn-icon rounded-circle mr-1">
+                        <a href="./{{$id}}" class="btn btn-icon rounded-circle mr-1">
                             <i class="fas fa-redo fs-md"></i>
                         </a>
                         <a href="page_inbox_general.html" class="btn btn-icon rounded-circle mr-1">
@@ -156,9 +156,11 @@ app\Page::upperContent( $title, $ActiveMenuCategory, $ActiveMenuSubCategory,1,0,
                                 <div class="panel-container show " style="width: 98%"><br>
                                     <div class="panel-content">
                                         <form action="http://<?=ROOT_APP_URL;?>/sendMessage" method="post">
-
-
-                                            <textarea class="js-summernote" id="saveToLocal" name="Content"></textarea>
+                                            <input name="conid" type="hidden" value="{{$id}}">
+                                            <input name="adresat" type="hidden" value="{{$adresat}}">
+                                            <input id="sendmsg_tresc" name="tresc" type="hidden" value="">
+                                            
+                                            <textarea class="js-summernote" id="saveToLocal" name="tresc"></textarea>
                                             <div class="mt-2 clearfix">
                                                 <div class="custom-control mt-3 custom-checkbox float-left">
                                                     <input type="checkbox" class="custom-control-input" id="autoSave" checked="checked">
